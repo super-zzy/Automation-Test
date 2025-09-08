@@ -1,61 +1,47 @@
-# @Time     : 2022/5/9 16:01
+# @Time     : 2024/5/20 16:10
 # @Author   : CN-LanBao
 # -*- coding: utf-8 -*-
-# 测试套件示例
-# 若想通过 main.py 启动测试，测试用例请按照 pytest 函数式编写规范
-
 import pytest
 import allure
-
-
-# 一个自定义的前置和收尾，将会在 setup_and_teardown_demo 的前置后执行前置，收尾前执行收尾
-@pytest.fixture(scope="function")
-def d(setup_and_teardown_demo):
-    """
-    额外前置收尾，将实例化对象重命名
-    @Author: CN-LanBao
-    @Create: 2022/5/10 10:19
-    :return: Uiautomator
-    """
-    print("Setup")
-    yield setup_and_teardown_demo
-    print("Teardown")
 
 
 @allure.severity("normal")
 @allure.feature("功能测试")
 @allure.story("检查页面相机文本控件")
 def test_case01(d):
-    assert d.check_text_exists("相机")
+    """检查页面是否存在'相机'文本"""
+    assert d.check_text_exists("相机"), "页面未找到'相机'文本"
 
 
 @allure.severity("blocker")
 @allure.feature("功能测试")
-@allure.story("检查页面 QQ 文本控件")
-@pytest.mark.skipif(True, reason="Skip if demo")
+@allure.story("检查页面QQ文本控件")
+@pytest.mark.skipif(True, reason="演示跳过用例")
 def test_case02(d):
-    assert d.check_text_exists("QQ")
+    """检查页面是否存在'QQ'文本（跳过）"""
+    assert d.check_text_exists("QQ"), "页面未找到'QQ'文本"
 
 
 @allure.severity("blocker")
-@allure.feature("API 测试")
-@allure.story("click 参数不正确")
-@allure.step("click 失败")
-@pytest.mark.skipif(False, reason="Skip if demo")
+@allure.feature("API测试")
+@allure.story("click参数不正确")
+@allure.step("执行错误的click调用")
+@pytest.mark.skipif(False, reason="演示失败用例")
 def test_case03(d):
-    # 必定 Fail 的命令
-    d.click(100)
+    """调用click时传递单参数（预期失败）"""
+    with pytest.raises(Exception):
+        d.click(100)  # 故意传递单参数，触发错误
 
 
 @allure.severity("normal")
-@allure.title("Case 04 测试正确的 click")
-@allure.feature("API 测试")
-@allure.story("click 参数正确")
+@allure.title("Case 04 测试正确的click")
+@allure.feature("API测试")
+@allure.story("click参数正确")
 def test_case04(d):
-    # 必定 Fail 的命令
-    with allure.step("第一次 click"):
-        d.click(100, 100)
-    with allure.step("第二次 click"):
-        d.click(200, 200)
-        d.log_util.debug("Debug信息")
-        d.log_util.info("INFO 信息")
+    """测试正确的坐标点击"""
+    with allure.step("第一次点击（100,100）"):
+        assert d.click(100, 100), "第一次点击失败"
+
+    with allure.step("第二次点击（200,200）"):
+        assert d.click(200, 200), "第二次点击失败"
+        d.log.info("两次点击操作完成，测试通过")

@@ -1,12 +1,36 @@
-from app import create_app  # 导入 create_app 函数，而非直接导入 app
+# @Time     : 2024/5/20 16:30
+# @Author   : CN-LanBao
+# -*- coding: utf-8 -*-
+import os
+import sys  # 必须最先导入 sys 模块
 
-# ------------------- 关键：通过 create_app 函数创建 app 对象，避免循环导入 -------------------
-app = create_app()
+# 第一步：强制将项目根目录加入 sys.path（重中之重！）
+# 作用：确保后续导入 app 时，app/__init__.py 能找到上层的 conf 模块
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))  # 获取 run.py 所在目录（项目根目录）
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)  # 插入到 sys.path 最前面，优先加载
+    print(f"[DEBUG] 已将项目根目录加入 sys.path：{PROJECT_ROOT}")
+
+# 第二步：此时再导入 app 和 conf（顺序不能错！）
+from app import create_app
+from conf import GlobalConfig
+from util.log_util import TempLog
+
+log = TempLog()
 
 if __name__ == "__main__":
-    # 启动 Flask 服务（保持原配置，如端口、debug 模式）
-    app.run(
-        host="0.0.0.0",
-        port=5000,
-        debug=True  # 生产环境需改为 False
-    )
+    try:
+        # 创建 Flask 应用
+        app = create_app()
+        log.info(f"Flask应用初始化完成（环境：{GlobalConfig['env']}）")
+
+        # 启动 Web 服务
+        host = GlobalConfig["web"]["host"]
+        port = GlobalConfig["web"]["port"]
+        debug = GlobalConfig["web"]["debug"]
+
+        log.info(f"启动Web服务：http://{host}:{port}")
+        app.run(host=host, port=port, debug=debug, use_reloader=False)
+    except Exception as e:
+        log.error(f"项目启动失败：{str(e)}", exc_info=True)
+        raise
