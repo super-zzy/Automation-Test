@@ -1,0 +1,5 @@
+[2025-09-08 16:32:49,733][ERROR] ≤‚ ‘“Ï≥££∫Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.

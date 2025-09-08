@@ -1,0 +1,10 @@
+INFO     AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, screen_on(), None
+ERROR    AF8YVB1805003480:log_util.py:55 Fail to execute AF8YVB1805003480, click(x=100): 
+Traceback (most recent call last):
+  File "D:\PyCharmProjects\ums_uiautomator\core\uiautomator.py", line 93, in wrapper
+    func_return = func(self, *args, **kwargs)
+TypeError: click() missing 1 required positional argument: 'y'
+
+INFO     AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, screenshot(filename=D:\PyCharmProjects\ums_uiautomator\core\../result/13/screenshot\AF8YVB1805003480_click_2025_09_08_16_42_19.png), D:\PyCharmProjects\ums_uiautomator\core\../result/13/screenshot\AF8YVB1805003480_click_2025_09_08_16_42_19.png
+ERROR    AF8YVB1805003480:log_util.py:55 The path of fail time screenshot is D:\PyCharmProjects\ums_uiautomator\core\../result/13/screenshot\AF8YVB1805003480_click_2025_09_08_16_42_19.png
+INFO     AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, press(key=home), True

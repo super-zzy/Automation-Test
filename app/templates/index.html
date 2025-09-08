@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PUTEST - Android UI自动化测试平台</title>
+    <style>
+        .container { width: 800px; margin: 50px auto; }
+        .section { margin: 20px 0; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        select, button { padding: 8px 12px; margin: 0 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #f5f5f5; }
+        #taskStatus { margin-top: 10px; padding: 12px; border-radius: 4px; background: #f5f5f5; min-height: 20px; }
+        /* 加载动画样式 */
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.1); border-radius: 50%; border-top-color: #333; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* 状态颜色区分 */
+        .status-pending { color: #666; }
+        .status-running { color: #007bff; }
+        .status-success { color: #28a745; }
+        .status-failed { color: #dc3545; }
+        #reportSection { margin-top: 15px; display: none; }
+        #reportLink { color: #007bff; text-decoration: none; font-weight: bold; }
+        #reportLink:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PUTEST - Android UI自动化测试平台</h1>
+
+        <!-- 设备选择 -->
+        <div class="section">
+            <label>选择测试设备：</label>
+            <select id="deviceSelect"></select>
+            <button onclick="loadDevices()">刷新设备</button>
+        </div>
+
+        <!-- 用例选择 -->
+        <div class="section">
+            <label>选择测试用例：</label>
+            <select id="suiteSelect"></select>
+            <button onclick="loadSuites()">刷新用例</button>
+        </div>
+
+        <!-- 测试控制 -->
+        <div class="section">
+            <button onclick="startTest()">启动测试</button>
+            <div id="taskInfo" style="display: none; margin-top: 10px;">
+                任务ID：<span id="taskId"></span>
+                <!-- 移除手动查询按钮，改为自动轮询 -->
+            </div>
+        </div>
+
+        <!-- 测试状态（含加载动画） -->
+        <div class="section">
+            <h3>测试状态</h3>
+            <div id="taskStatus">请启动测试...</div>
+        </div>
+
+        <!-- 报告查看（自动显示） -->
+        <div class="section" id="reportSection">
+            <h3>测试报告</h3>
+            <p>点击下方链接查看详细报告：</p>
+            <a id="reportLink" target="_blank">📊 查看Allure测试报告</a>
+        </div>
+    </div>
+
+    <script>
+        let statusPollTimer = null; // 定时查询计时器（全局变量，用于停止轮询）
+
+        // 加载设备列表（保持不变）
+        function loadDevices() {
+            fetch("/api/device/list")
+                .then(res => res.json())
+                .then(data => {
+                    const select = document.getElementById("deviceSelect");
+                    select.innerHTML = "";
+                    if (data.code === 200) {
+                        data.data.forEach(dev => {
+                            select.innerHTML += `<option value="${dev.device_id}">${dev.device_id}</option>`;
+                        });
+                    } else {
+                        alert(data.msg);
+                    }
+                });
+        }
+
+        // 加载用例列表（保持不变）
+        function loadSuites() {
+            fetch("/api/test/suites")
+                .then(res => res.json())
+                .then(data => {
+                    const select = document.getElementById("suiteSelect");
+                    select.innerHTML = "";
+                    if (data.code === 200) {
+                        data.data.forEach(suite => {
+                            select.innerHTML += `<option value="${suite.id}">${suite.name}（${suite.rel_path}）</option>`;
+                        });
+                    } else {
+                        alert(data.msg);
+                    }
+                });
+        }
+
+        // 启动测试（新增定时轮询逻辑）
+        function startTest() {
+            const deviceId = document.getElementById("deviceSelect").value;
+            const suiteId = document.getElementById("suiteSelect").value;
+            if (!deviceId || !suiteId) {
+                alert("请先选择设备和用例");
+                return;
+            }
+
+            // 停止之前可能存在的轮询（避免多个任务同时轮询）
+            if (statusPollTimer) {
+                clearInterval(statusPollTimer);
+                statusPollTimer = null;
+            }
+
+            fetch("/api/test/start", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ device_id: deviceId, suite_id: parseInt(suiteId) })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const taskId = data.data.task_id;
+                    document.getElementById("taskId").textContent = taskId;
+                    document.getElementById("taskInfo").style.display = "block";
+                    // 初始状态：等待执行（带加载动画）
+                    updateTaskStatusUI("pending", "等待执行...");
+                    // 启动定时轮询（每2秒查询一次状态）
+                    statusPollTimer = setInterval(() => {
+                        queryTaskStatus(taskId);
+                    }, 2000);
+                } else {
+                    alert(data.msg);
+                }
+            });
+        }
+
+        // 查询任务状态（新增状态判断与UI更新）
+        function queryTaskStatus(taskId) {
+            fetch(`/api/test/status/${taskId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        const task = data.data;
+                        const status = task.status;
+
+                        // 1. 更新状态UI（根据状态显示不同内容）
+                        if (status === "pending") {
+                            updateTaskStatusUI("pending", "等待执行...");
+                        } else if (status === "running") {
+                            updateTaskStatusUI("running", "执行中...");
+                        } else if (status.startsWith("success")) {
+                            // 测试成功：停止轮询，显示报告链接
+                            clearInterval(statusPollTimer);
+                            statusPollTimer = null;
+                            updateTaskStatusUI("success", "测试完成！");
+                            showReportLink(task.report_url); // 显示报告链接
+                        } else if (status.startsWith("failed")) {
+                            // 测试失败：停止轮询，显示错误信息
+                            clearInterval(statusPollTimer);
+                            statusPollTimer = null;
+                            updateTaskStatusUI("failed", `测试失败：${status.split(":", 2)[1] || "未知错误"}`);
+                        }
+                    } else {
+                        // 接口错误：停止轮询
+                        clearInterval(statusPollTimer);
+                        statusPollTimer = null;
+                        updateTaskStatusUI("failed", `查询失败：${data.msg}`);
+                        alert(data.msg);
+                    }
+                })
+                .catch(error => {
+                    // 网络错误：停止轮询
+                    clearInterval(statusPollTimer);
+                    statusPollTimer = null;
+                    updateTaskStatusUI("failed", `网络错误：${error.message}`);
+                });
+        }
+
+        // 更新状态UI（封装样式与内容更新）
+        function updateTaskStatusUI(statusType, content) {
+            const statusElem = document.getElementById("taskStatus");
+            // 清空原有内容与样式
+            statusElem.className = "";
+            statusElem.innerHTML = "";
+
+            // 根据状态添加样式和内容（执行中显示加载动画）
+            statusElem.classList.add(`status-${statusType}`);
+            if (statusType === "running") {
+                statusElem.innerHTML = `<span class="loading"></span> ${content}`;
+            } else {
+                statusElem.textContent = `状态：${content}`;
+            }
+        }
+
+        // 显示报告链接（封装报告区域显示逻辑）
+        function showReportLink(reportUrl) {
+            const reportSection = document.getElementById("reportSection");
+            const reportLink = document.getElementById("reportLink");
+            // 设置报告链接（确保URL完整）
+            reportLink.href = reportUrl;
+            // 显示报告区域
+            reportSection.style.display = "block";
+            // 可选：自动聚焦报告链接，提升用户体验
+            reportLink.focus();
+        }
+
+        // 页面加载时初始化（保持不变）
+        window.onload = () => {
+            loadDevices();
+            loadSuites();
+            // 页面关闭前停止轮询（避免内存泄漏）
+            window.onbeforeunload = () => {
+                if (statusPollTimer) {
+                    clearInterval(statusPollTimer);
+                }
+            };
+        };
+    </script>
+</body>
+</html>

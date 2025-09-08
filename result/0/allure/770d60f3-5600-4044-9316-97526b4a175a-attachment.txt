@@ -1,0 +1,34 @@
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 python -m uiautomator2 init AF8YVB1805003480
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:21:39 init:156] uiautomator2 version: 2.16.14\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:21:39 init:372] Install minicap, minitouch\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minitouch-f7a806902f\\minitouch\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:238] Push to /data/local/tmp/minitouch:0755\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minicap.so-9936d99322\\minicap.so\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:238] Push to /data/local/tmp/minicap.so:0755\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minicap-4ad740a772\\minicap\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:238] Push to /data/local/tmp/minicap:0755\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:256] apk-debug package-info: None\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:257] apk-debug-test package-info: None\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:21:39 init:385] Install com.github.uiautomator, com.github.uiautomator.test 2.3.3\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:21:39 init:167] Shell: ('pm', 'uninstall', 'com.github.uiautomator')\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:21:39 init:167] Shell: ('pm', 'uninstall', 'com.github.uiautomator.test')\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\app-uiautomator.apk-d3f17174fb\\app-uiautomator.apk\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:39 init:238] Push to /data/local/tmp/app-uiautomator.apk:0644\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:21:40 init:167] Shell: ('pm', 'install', '-r', '-t', '/data/local/tmp/app-uiautomator.apk')\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:21:53 init:331] - app-uiautomator.apk installed\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:53 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\app-uiautomator-test.apk-652bf9e13c\\app-uiautomator-test.apk\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:21:53 init:238] Push to /data/local/tmp/app-uiautomator-test.apk:0644\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:21:53 init:167] Shell: ('pm', 'install', '-r', '-t', '/data/local/tmp/app-uiautomator-test.apk')\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:22:04 init:331] - app-uiautomator-test.apk installed\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:22:04 init:167] Shell: ('/data/local/tmp/atx-agent', 'server', '--stop')\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:22:05 init:295] Real version: [0, 10, 0], Expect version: [0, 10, 0]\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:22:05 init:167] Shell: ('/data/local/tmp/atx-agent', 'server', '--nouia', '-d', '--addr', '127.0.0.1:7912')\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:22:05 init:350] Check atx-agent version\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:22:05 init:359] Forward: local:tcp:54810 -> remote:tcp:7912\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:22:06 init:359] Forward: local:tcp:54810 -> remote:tcp:7912\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:22:06 init:362] atx-agent version 0.10.0\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:22:06 init:365] device wlan ip: 172.27.22.232\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'Successfully init AdbDevice(serial=AF8YVB1805003480)\r\n'
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, screen_on(), None
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, check_text_exists(text=相机), False
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, press(key=home), True

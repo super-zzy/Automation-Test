@@ -1,0 +1,184 @@
+[2025-09-08 16:28:19,862][INFO] 执行测试命令：python -m pytest -sv D:\PyCharmProjects\ums_uiautomator\app\routes\../../test_suite\tmp_project.py --device_id=AF8YVB1805003480 --task_id=9 --alluredir=D:\PyCharmProjects\ums_uiautomator\app\routes\../../result\9\allure
+[2025-09-08 16:28:24,839][INFO] ============================= test session starts =============================
+[2025-09-08 16:28:24,840][INFO] platform win32 -- Python 3.9.13, pytest-7.1.2, pluggy-1.6.0 -- C:\ProgramData\Anaconda3\python.exe
+[2025-09-08 16:28:24,844][INFO] cachedir: .pytest_cache
+[2025-09-08 16:28:24,845][INFO] metadata: {'Python': '3.9.13', 'Platform': 'Windows-10-10.0.26100-SP0', 'Packages': {'pytest': '7.1.2', 'py': '1.11.0', 'pluggy': '1.6.0'}, 'Plugins': {'allure-pytest': '2.9.45', 'anyio': '1.3.1', 'langsmith': '0.4.20', 'html': '3.1.1', 'metadata': '2.0.1'}, 'JAVA_HOME': 'C:\\Program Files\\Java\\jdk1.8.0_221'}
+[2025-09-08 16:28:24,845][INFO] rootdir: D:\PyCharmProjects\ums_uiautomator
+[2025-09-08 16:28:24,845][INFO] plugins: allure-pytest-2.9.45, anyio-1.3.1, langsmith-0.4.20, html-3.1.1, metadata-2.0.1
+[2025-09-08 16:28:24,851][INFO] collecting ... collected 4 items
+[2025-09-08 16:28:24,852][INFO] 
+[2025-09-08 16:28:24,853][INFO] python -m uiautomator2 init AF8YVB1805003480
+[2025-09-08 16:28:24,853][INFO] test_suite/tmp_project.py::test_case01 [2025-09-08 16:28:24,853][INFO] python -m uiautomator2 init AF8YVB1805003480
+[2025-09-08 16:28:27,999][DEBUG] b'[I 250908 16:28:27 init:156] uiautomator2 version: 2.16.14\r\n'
+[2025-09-08 16:28:28,000][DEBUG] b'[I 250908 16:28:27 init:372] Install minicap, minitouch\r\n'
+[2025-09-08 16:28:28,001][DEBUG] b'[D 250908 16:28:28 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minitouch-f7a806902f\\minitouch\r\n'
+[2025-09-08 16:28:28,001][DEBUG] b'[D 250908 16:28:28 init:238] Push to /data/local/tmp/minitouch:0755\r\n'
+[2025-09-08 16:28:28,052][DEBUG] b'[D 250908 16:28:28 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minicap.so-9936d99322\\minicap.so\r\n'
+[2025-09-08 16:28:28,054][DEBUG] b'[D 250908 16:28:28 init:238] Push to /data/local/tmp/minicap.so:0755\r\n'
+[2025-09-08 16:28:28,071][DEBUG] b'[D 250908 16:28:28 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minicap-4ad740a772\\minicap\r\n'
+[2025-09-08 16:28:28,071][DEBUG] b'[D 250908 16:28:28 init:238] Push to /data/local/tmp/minicap:0755\r\n'
+[2025-09-08 16:28:28,247][DEBUG] b"[D 250908 16:28:28 init:256] apk-debug package-info: {'package_name': 'com.github.uiautomator', 'version_name': '2.3.3', 'version_code': '2003003', 'flags': ['DEBUGGABLE', 'HAS_CODE', 'ALLOW_CLEAR_USER_DATA', 'ALLOW_BACKUP'], 'first_install_time': datetime.datetime(2025, 9, 4, 14, 21, 50), 'last_update_time': datetime.datetime(2025, 9, 4, 14, 21, 50), 'signature': 'ae17cd86], past signatures:['}\r\n"
+[2025-09-08 16:28:28,248][DEBUG] b"[D 250908 16:28:28 init:257] apk-debug-test package-info: {'package_name': 'com.github.uiautomator.test', 'version_name': 'null', 'version_code': '', 'flags': ['DEBUGGABLE', 'HAS_CODE', 'ALLOW_CLEAR_USER_DATA', 'ALLOW_BACKUP'], 'first_install_time': datetime.datetime(2025, 9, 4, 14, 22, 1), 'last_update_time': datetime.datetime(2025, 9, 4, 14, 22, 1), 'signature': 'ae17cd86], past signatures:['}\r\n"
+[2025-09-08 16:28:28,248][DEBUG] b'[I 250908 16:28:28 init:390] Already installed com.github.uiautomator apks\r\n'
+[2025-09-08 16:28:28,249][DEBUG] b"[D 250908 16:28:28 init:167] Shell: ('/data/local/tmp/atx-agent', 'server', '--stop')\r\n"
+[2025-09-08 16:28:28,708][DEBUG] b'[D 250908 16:28:28 init:295] Real version: [0, 10, 0], Expect version: [0, 10, 0]\r\n'
+[2025-09-08 16:28:28,708][DEBUG] b"[D 250908 16:28:28 init:167] Shell: ('/data/local/tmp/atx-agent', 'server', '--nouia', '-d', '--addr', '127.0.0.1:7912')\r\n"
+[2025-09-08 16:28:28,806][DEBUG] b'[I 250908 16:28:28 init:350] Check atx-agent version\r\n'
+[2025-09-08 16:28:28,809][DEBUG] b'[D 250908 16:28:28 init:359] Forward: local:tcp:51783 -> remote:tcp:7912\r\n'
+[2025-09-08 16:28:29,329][DEBUG] b'[D 250908 16:28:29 init:359] Forward: local:tcp:51783 -> remote:tcp:7912\r\n'
+[2025-09-08 16:28:29,855][DEBUG] b'[D 250908 16:28:29 init:359] Forward: local:tcp:51783 -> remote:tcp:7912\r\n'
+[2025-09-08 16:28:29,866][DEBUG] b'[D 250908 16:28:29 init:362] atx-agent version 0.10.0\r\n'
+[2025-09-08 16:28:29,877][DEBUG] b'[D 250908 16:28:29 init:365] device wlan ip: 172.27.22.232\r\n'
+[2025-09-08 16:28:29,878][DEBUG] b'Successfully init AdbDevice(serial=AF8YVB1805003480)\r\n'
+[2025-09-08 16:28:32,095][INFO] [D 250908 16:28:32 __init__:661] [pid:5664] [AF8YVB1805003480] kill process(ps): uiautomator
+[2025-09-08 16:28:33,036][INFO] [D 250908 16:28:33 __init__:682] [pid:5664] [AF8YVB1805003480] uiautomator-v2 is starting ... left: 40.0s
+[2025-09-08 16:28:34,061][INFO] [D 250908 16:28:34 __init__:682] [pid:5664] [AF8YVB1805003480] uiautomator-v2 is starting ... left: 39.0s
+[2025-09-08 16:28:35,081][INFO] [D 250908 16:28:35 __init__:682] [pid:5664] [AF8YVB1805003480] uiautomator-v2 is starting ... left: 38.0s
+[2025-09-08 16:28:35,332][INFO] [D 250908 16:28:35 __init__:696] [pid:5664] [AF8YVB1805003480] show float window
+[2025-09-08 16:28:36,336][INFO] [D 250908 16:28:36 __init__:682] [pid:5664] [AF8YVB1805003480] uiautomator-v2 is starting ... left: 36.7s
+[2025-09-08 16:28:36,371][INFO] [I 250908 16:28:36 __init__:643] [pid:5664] [AF8YVB1805003480] uiautomator back to normal
+[2025-09-08 16:28:36,424][INFO] AF8YVB1805003480, screen_on(), None
+[2025-09-08 16:28:36,425][INFO] [2025-09-08 16:28:36,424][INFO] AF8YVB1805003480, screen_on(), None
+[2025-09-08 16:28:36,425][INFO] Setup
+[2025-09-08 16:28:36,552][INFO] AF8YVB1805003480, check_text_exists(text=相机), True
+[2025-09-08 16:28:36,552][INFO] [2025-09-08 16:28:36,552][INFO] AF8YVB1805003480, check_text_exists(text=相机), True
+[2025-09-08 16:28:36,637][INFO] PASSEDTeardown
+[2025-09-08 16:28:36,728][INFO] AF8YVB1805003480, press(key=home), True
+[2025-09-08 16:28:36,729][INFO] [2025-09-08 16:28:36,728][INFO] AF8YVB1805003480, press(key=home), True
+[2025-09-08 16:28:36,745][INFO] 
+[2025-09-08 16:28:36,748][INFO] test_suite/tmp_project.py::test_case02 SKIPPED (Skip if demo)
+[2025-09-08 16:28:36,804][INFO] AF8YVB1805003480, screen_on(), None
+[2025-09-08 16:28:36,805][INFO] test_suite/tmp_project.py::test_case03 [2025-09-08 16:28:36,804][INFO] AF8YVB1805003480, screen_on(), None
+[2025-09-08 16:28:36,806][INFO] Setup
+[2025-09-08 16:28:36,818][ERROR] Fail to execute AF8YVB1805003480, click(x=100): 
+Traceback (most recent call last):
+  File "D:\PyCharmProjects\ums_uiautomator\core\uiautomator.py", line 93, in wrapper
+    func_return = func(self, *args, **kwargs)
+TypeError: click() missing 1 required positional argument: 'y'
+
+[2025-09-08 16:28:36,818][INFO] [2025-09-08 16:28:36,818][ERROR] Fail to execute AF8YVB1805003480, click(x=100):
+[2025-09-08 16:28:36,819][INFO] Traceback (most recent call last):
+[2025-09-08 16:28:36,820][INFO] File "D:\PyCharmProjects\ums_uiautomator\core\uiautomator.py", line 93, in wrapper
+[2025-09-08 16:28:36,820][INFO] func_return = func(self, *args, **kwargs)
+[2025-09-08 16:28:36,820][INFO] TypeError: click() missing 1 required positional argument: 'y'
+[2025-09-08 16:28:36,821][INFO] 
+[2025-09-08 16:28:37,097][INFO] AF8YVB1805003480, screenshot(filename=D:\PyCharmProjects\ums_uiautomator\core\../result/9/screenshot\AF8YVB1805003480_click_2025_09_08_16_28_36.png), D:\PyCharmProjects\ums_uiautomator\core\../result/9/screenshot\AF8YVB1805003480_click_2025_09_08_16_28_36.png
+[2025-09-08 16:28:37,098][INFO] [2025-09-08 16:28:37,097][INFO] AF8YVB1805003480, screenshot(filename=D:\PyCharmProjects\ums_uiautomator\core\../result/9/screenshot\AF8YVB1805003480_click_2025_09_08_16_28_36.png), D:\PyCharmProjects\ums_uiautomator\core\../result/9/screenshot\AF8YVB1805003480_click_2025_09_08_16_28_36.png
+[2025-09-08 16:28:37,099][INFO] [2025-09-08 16:28:37,098][ERROR] The path of fail time screenshot is D:\PyCharmProjects\ums_uiautomator\core\../result/9/screenshot\AF8YVB1805003480_click_2025_09_08_16_28_36.png
+[2025-09-08 16:28:37,509][INFO] FAILEDTeardown
+[2025-09-08 16:28:37,556][INFO] AF8YVB1805003480, press(key=home), True
+[2025-09-08 16:28:37,557][INFO] [2025-09-08 16:28:37,556][INFO] AF8YVB1805003480, press(key=home), True
+[2025-09-08 16:28:37,560][INFO] 
+[2025-09-08 16:28:37,612][INFO] AF8YVB1805003480, screen_on(), None
+[2025-09-08 16:28:37,613][INFO] test_suite/tmp_project.py::test_case04 [2025-09-08 16:28:37,612][INFO] AF8YVB1805003480, screen_on(), None
+[2025-09-08 16:28:37,614][INFO] Setup
+[2025-09-08 16:28:37,796][INFO] AF8YVB1805003480, click(x=100, y=100), None
+[2025-09-08 16:28:37,797][INFO] [2025-09-08 16:28:37,796][INFO] AF8YVB1805003480, click(x=100, y=100), None
+[2025-09-08 16:28:37,988][INFO] AF8YVB1805003480, click(x=200, y=200), None
+[2025-09-08 16:28:37,989][INFO] [2025-09-08 16:28:37,988][INFO] AF8YVB1805003480, click(x=200, y=200), None
+[2025-09-08 16:28:37,989][INFO] INFO 信息
+[2025-09-08 16:28:37,991][INFO] [2025-09-08 16:28:37,989][INFO] INFO 信息
+[2025-09-08 16:28:37,991][INFO] PASSEDTeardown
+[2025-09-08 16:28:38,385][INFO] AF8YVB1805003480, press(key=home), True
+[2025-09-08 16:28:38,386][INFO] [2025-09-08 16:28:38,385][INFO] AF8YVB1805003480, press(key=home), True
+[2025-09-08 16:28:38,391][INFO] 
+[2025-09-08 16:28:38,392][INFO] 
+[2025-09-08 16:28:38,392][INFO] ================================== FAILURES ===================================
+[2025-09-08 16:28:38,394][INFO] _________________________________ test_case03 _________________________________
+[2025-09-08 16:28:38,394][INFO] 
+[2025-09-08 16:28:38,395][INFO] self = <core.uiautomator.Uiautomator object at 0x000002617B7D8C10>
+[2025-09-08 16:28:38,395][INFO] args = (100,), kwargs = {}, func_name = 'click', var_names = ('x', 'y')
+[2025-09-08 16:28:38,396][INFO] params = 'x=100'
+[2025-09-08 16:28:38,396][INFO] msg = 'Fail to execute AF8YVB1805003480, click(x=100): \nTraceback (most recent call last):\n  File "D:\\PyCharmProjects\\um...per\n    func_return = func(self, *args, **kwargs)\nTypeError: click() missing 1 required positional argument: \'y\'\n'
+[2025-09-08 16:28:38,397][INFO] screenshot_path = 'D:\\PyCharmProjects\\ums_uiautomator\\core\\../result/9/screenshot\\AF8YVB1805003480_click_2025_09_08_16_28_36.png'
+[2025-09-08 16:28:38,397][INFO] f = <_io.BufferedReader name='D:\\PyCharmProjects\\ums_uiautomator\\core\\../result/9/screenshot\\AF8YVB1805003480_click_2025_09_08_16_28_36.png'>
+[2025-09-08 16:28:38,398][INFO] 
+[2025-09-08 16:28:38,398][INFO] def wrapper(self, *args, **kwargs):
+[2025-09-08 16:28:38,398][INFO] """
+[2025-09-08 16:28:38,399][INFO] 写入 log (设备 ID, 方法名和入参, 方法 return)
+[2025-09-08 16:28:38,399][INFO] @Author: CN-LanBao
+[2025-09-08 16:28:38,399][INFO] @Create: 2022/5/6 16:06
+[2025-09-08 16:28:38,401][INFO] :return: func()
+[2025-09-08 16:28:38,401][INFO] """
+[2025-09-08 16:28:38,401][INFO] # 获取方法信息，去除 self 参数
+[2025-09-08 16:28:38,402][INFO] func_name, var_names = func.__name__, func.__code__.co_varnames[1:]
+[2025-09-08 16:28:38,402][INFO] # 入参信息格式化
+[2025-09-08 16:28:38,402][INFO] params = ", ".join(["{}={}".format(k, v) for k, v in zip(var_names, args)]
+[2025-09-08 16:28:38,404][INFO] + ["{}={}".format(k, v) for k, v in kwargs.items()])
+[2025-09-08 16:28:38,404][INFO] try:
+[2025-09-08 16:28:38,405][INFO] >           func_return = func(self, *args, **kwargs)
+[2025-09-08 16:28:38,405][INFO] E           TypeError: click() missing 1 required positional argument: 'y'
+[2025-09-08 16:28:38,406][INFO] 
+[2025-09-08 16:28:38,406][INFO] core\uiautomator.py:93: TypeError
+[2025-09-08 16:28:38,407][INFO] 
+[2025-09-08 16:28:38,407][INFO] During handling of the above exception, another exception occurred:
+[2025-09-08 16:28:38,407][INFO] 
+[2025-09-08 16:28:38,409][INFO] d = <core.uiautomator.Uiautomator object at 0x000002617B7D8C10>
+[2025-09-08 16:28:38,409][INFO] 
+[2025-09-08 16:28:38,409][INFO] >   ???
+[2025-09-08 16:28:38,410][INFO] 
+[2025-09-08 16:28:38,410][INFO] D:\PyCharmProjects\putest\test_suite\tmp_project.py:47:
+[2025-09-08 16:28:38,412][INFO] _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+[2025-09-08 16:28:38,412][INFO] 
+[2025-09-08 16:28:38,413][INFO] self = <core.uiautomator.Uiautomator object at 0x000002617B7D8C10>
+[2025-09-08 16:28:38,413][INFO] args = (100,), kwargs = {}, func_name = 'click', var_names = ('x', 'y')
+[2025-09-08 16:28:38,413][INFO] params = 'x=100'
+[2025-09-08 16:28:38,413][INFO] msg = 'Fail to execute AF8YVB1805003480, click(x=100): \nTraceback (most recent call last):\n  File "D:\\PyCharmProjects\\um...per\n    func_return = func(self, *args, **kwargs)\nTypeError: click() missing 1 required positional argument: \'y\'\n'
+[2025-09-08 16:28:38,414][INFO] screenshot_path = 'D:\\PyCharmProjects\\ums_uiautomator\\core\\../result/9/screenshot\\AF8YVB1805003480_click_2025_09_08_16_28_36.png'
+[2025-09-08 16:28:38,414][INFO] f = <_io.BufferedReader name='D:\\PyCharmProjects\\ums_uiautomator\\core\\../result/9/screenshot\\AF8YVB1805003480_click_2025_09_08_16_28_36.png'>
+[2025-09-08 16:28:38,414][INFO] 
+[2025-09-08 16:28:38,415][INFO] def wrapper(self, *args, **kwargs):
+[2025-09-08 16:28:38,415][INFO] """
+[2025-09-08 16:28:38,415][INFO] 写入 log (设备 ID, 方法名和入参, 方法 return)
+[2025-09-08 16:28:38,417][INFO] @Author: CN-LanBao
+[2025-09-08 16:28:38,417][INFO] @Create: 2022/5/6 16:06
+[2025-09-08 16:28:38,417][INFO] :return: func()
+[2025-09-08 16:28:38,418][INFO] """
+[2025-09-08 16:28:38,418][INFO] # 获取方法信息，去除 self 参数
+[2025-09-08 16:28:38,418][INFO] func_name, var_names = func.__name__, func.__code__.co_varnames[1:]
+[2025-09-08 16:28:38,420][INFO] # 入参信息格式化
+[2025-09-08 16:28:38,421][INFO] params = ", ".join(["{}={}".format(k, v) for k, v in zip(var_names, args)]
+[2025-09-08 16:28:38,421][INFO] + ["{}={}".format(k, v) for k, v in kwargs.items()])
+[2025-09-08 16:28:38,422][INFO] try:
+[2025-09-08 16:28:38,423][INFO] func_return = func(self, *args, **kwargs)
+[2025-09-08 16:28:38,423][INFO] except Exception:
+[2025-09-08 16:28:38,423][INFO] msg = "Fail to execute {}, {}({}): \n{}".format(self.device_id, func_name, params,
+[2025-09-08 16:28:38,424][INFO] traceback.format_exc())
+[2025-09-08 16:28:38,424][INFO] self.log_util.error(msg)
+[2025-09-08 16:28:38,425][INFO] # 保存截图
+[2025-09-08 16:28:38,425][INFO] screenshot_path = self._fail_screenshot(func_name)
+[2025-09-08 16:28:38,425][INFO] self.log_util.error("The path of fail time screenshot is {}".format(screenshot_path))
+[2025-09-08 16:28:38,426][INFO] # 添加至 allure 报告
+[2025-09-08 16:28:38,426][INFO] with open(screenshot_path, "rb") as f:
+[2025-09-08 16:28:38,427][INFO] allure.attach(f.read(), func_name, allure.attachment_type.PNG)
+[2025-09-08 16:28:38,427][INFO] >           raise UiautomatorException(msg)
+[2025-09-08 16:28:38,427][INFO] E           core.uiautomator.UiautomatorException: Fail to execute AF8YVB1805003480, click(x=100):
+[2025-09-08 16:28:38,429][INFO] E           Traceback (most recent call last):
+[2025-09-08 16:28:38,429][INFO] E             File "D:\PyCharmProjects\ums_uiautomator\core\uiautomator.py", line 93, in wrapper
+[2025-09-08 16:28:38,429][INFO] E               func_return = func(self, *args, **kwargs)
+[2025-09-08 16:28:38,430][INFO] E           TypeError: click() missing 1 required positional argument: 'y'
+[2025-09-08 16:28:38,430][INFO] 
+[2025-09-08 16:28:38,430][INFO] core\uiautomator.py:104: UiautomatorException
+[2025-09-08 16:28:38,431][INFO] ----------------------------- Captured log setup ------------------------------
+[2025-09-08 16:28:38,431][INFO] INFO     AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, screen_on(), None
+[2025-09-08 16:28:38,433][INFO] ------------------------------ Captured log call ------------------------------
+[2025-09-08 16:28:38,433][INFO] ERROR    AF8YVB1805003480:log_util.py:55 Fail to execute AF8YVB1805003480, click(x=100):
+[2025-09-08 16:28:38,433][INFO] Traceback (most recent call last):
+[2025-09-08 16:28:38,434][INFO] File "D:\PyCharmProjects\ums_uiautomator\core\uiautomator.py", line 93, in wrapper
+[2025-09-08 16:28:38,434][INFO] func_return = func(self, *args, **kwargs)
+[2025-09-08 16:28:38,434][INFO] TypeError: click() missing 1 required positional argument: 'y'
+[2025-09-08 16:28:38,436][INFO] 
+[2025-09-08 16:28:38,436][INFO] INFO     AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, screenshot(filename=D:\PyCharmProjects\ums_uiautomator\core\../result/9/screenshot\AF8YVB1805003480_click_2025_09_08_16_28_36.png), D:\PyCharmProjects\ums_uiautomator\core\../result/9/screenshot\AF8YVB1805003480_click_2025_09_08_16_28_36.png
+[2025-09-08 16:28:38,437][INFO] ERROR    AF8YVB1805003480:log_util.py:55 The path of fail time screenshot is D:\PyCharmProjects\ums_uiautomator\core\../result/9/screenshot\AF8YVB1805003480_click_2025_09_08_16_28_36.png
+[2025-09-08 16:28:38,437][INFO] ---------------------------- Captured log teardown ----------------------------
+[2025-09-08 16:28:38,438][INFO] INFO     AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, press(key=home), True
+[2025-09-08 16:28:38,438][INFO] ============================== warnings summary ===============================
+[2025-09-08 16:28:38,439][INFO] test_suite/tmp_project.py::test_case01
+[2025-09-08 16:28:38,439][INFO] C:\Users\zyli\AppData\Roaming\Python\Python39\site-packages\packaging\version.py:127: DeprecationWarning: Creating a LegacyVersion has been deprecated and will be removed in the next major release
+[2025-09-08 16:28:38,439][INFO] warnings.warn(
+[2025-09-08 16:28:38,440][INFO] 
+[2025-09-08 16:28:38,440][INFO] -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+[2025-09-08 16:28:38,441][INFO] =========================== short test summary info ===========================
+[2025-09-08 16:28:38,441][INFO] FAILED test_suite/tmp_project.py::test_case03 - core.uiautomator.UiautomatorE...
+[2025-09-08 16:28:38,443][INFO] ============= 1 failed, 2 passed, 1 skipped, 1 warning in 13.56s ==============
+[2025-09-08 16:28:38,532][INFO] 测试完成，任务ID：9，报告目录：D:\PyCharmProjects\ums_uiautomator\app\routes\../../result\9\allure

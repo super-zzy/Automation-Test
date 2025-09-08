@@ -1,0 +1,25 @@
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 python -m uiautomator2 init AF8YVB1805003480
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:38:47 init:156] uiautomator2 version: 2.16.14\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:38:47 init:372] Install minicap, minitouch\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:47 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minitouch-f7a806902f\\minitouch\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:47 init:238] Push to /data/local/tmp/minitouch:0755\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:47 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minicap.so-9936d99322\\minicap.so\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:47 init:238] Push to /data/local/tmp/minicap.so:0755\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:47 init:59] Use cached assets: C:\\Users\\zyli\\.uiautomator2\\cache\\minicap-4ad740a772\\minicap\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:47 init:238] Push to /data/local/tmp/minicap:0755\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:38:47 init:256] apk-debug package-info: {'package_name': 'com.github.uiautomator', 'version_name': '2.3.3', 'version_code': '2003003', 'flags': ['DEBUGGABLE', 'HAS_CODE', 'ALLOW_CLEAR_USER_DATA', 'ALLOW_BACKUP'], 'first_install_time': datetime.datetime(2025, 9, 4, 14, 21, 50), 'last_update_time': datetime.datetime(2025, 9, 4, 14, 21, 50), 'signature': 'ae17cd86], past signatures:['}\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:38:47 init:257] apk-debug-test package-info: {'package_name': 'com.github.uiautomator.test', 'version_name': 'null', 'version_code': '', 'flags': ['DEBUGGABLE', 'HAS_CODE', 'ALLOW_CLEAR_USER_DATA', 'ALLOW_BACKUP'], 'first_install_time': datetime.datetime(2025, 9, 4, 14, 22, 1), 'last_update_time': datetime.datetime(2025, 9, 4, 14, 22, 1), 'signature': 'ae17cd86], past signatures:['}\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:38:47 init:390] Already installed com.github.uiautomator apks\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:38:47 init:167] Shell: ('/data/local/tmp/atx-agent', 'server', '--stop')\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:48 init:295] Real version: [0, 10, 0], Expect version: [0, 10, 0]\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b"[D 250904 14:38:48 init:167] Shell: ('/data/local/tmp/atx-agent', 'server', '--nouia', '-d', '--addr', '127.0.0.1:7912')\r\n"
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[I 250904 14:38:48 init:350] Check atx-agent version\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:48 init:359] Forward: local:tcp:54810 -> remote:tcp:7912\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:48 init:359] Forward: local:tcp:54810 -> remote:tcp:7912\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:48 init:362] atx-agent version 0.10.0\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'[D 250904 14:38:48 init:365] device wlan ip: 172.27.22.232\r\n'
+[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 b'Successfully init AdbDevice(serial=AF8YVB1805003480)\r\n'
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, screen_on(), None
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, app_start(package_name=com.tencent.mm, stop=True), None
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, swipe(fx=500, fy=800, tx=500, ty=2000, duration=1), True
+[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, press(key=home), True

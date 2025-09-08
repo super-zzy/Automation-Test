@@ -1,0 +1,12 @@
+2025-09-08 18:16:23,443 - path_debug - INFO - === 路径调试：get_test_suites ===
+2025-09-08 18:16:23,443 - path_debug - INFO - 项目根目录：D:\PyCharmProjects\ums_uiautomator
+2025-09-08 18:16:23,444 - path_debug - INFO - test_suite 目录：D:\PyCharmProjects\ums_uiautomator\test_suite
+2025-09-08 18:16:23,444 - path_debug - INFO - test_suite 是否存在：True
+2025-09-08 18:16:23,445 - path_debug - INFO - 找到用例：name=tmp_project.py, abs_path=D:\PyCharmProjects\ums_uiautomator\test_suite\tmp_project.py
+2025-09-08 18:16:23,445 - path_debug - INFO - 找到用例：name=weixin.py, abs_path=D:\PyCharmProjects\ums_uiautomator\test_suite\weixin.py
+2025-09-08 18:16:26,245 - path_debug - INFO - === 路径调试：get_test_suites ===
+2025-09-08 18:16:26,246 - path_debug - INFO - 项目根目录：D:\PyCharmProjects\ums_uiautomator
+2025-09-08 18:16:26,246 - path_debug - INFO - test_suite 目录：D:\PyCharmProjects\ums_uiautomator\test_suite
+2025-09-08 18:16:26,246 - path_debug - INFO - test_suite 是否存在：True
+2025-09-08 18:16:26,247 - path_debug - INFO - 找到用例：name=tmp_project.py, abs_path=D:\PyCharmProjects\ums_uiautomator\test_suite\tmp_project.py
+2025-09-08 18:16:26,247 - path_debug - INFO - 找到用例：name=weixin.py, abs_path=D:\PyCharmProjects\ums_uiautomator\test_suite\weixin.py

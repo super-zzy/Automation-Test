@@ -1,0 +1,8 @@
+# Flask核心
+Flask==2.3.3
+# 异步任务处理（避免测试阻塞Web）
+Flask-APScheduler==1.13.0
+# 进程管理（确保测试独立运行）
+psutil==5.9.6
+# Allure报告Web展示支持
+allure-python-commons==2.9.45

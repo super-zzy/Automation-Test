@@ -1,0 +1,75 @@
+[2025-09-08 17:05:21,377][INFO] 执行 pytest 命令：python -m pytest -sv D:\PyCharmProjects\ums_uiautomator\test_suite\tmp_project.py --device_id=AF8YVB1805003480 --task_id=19 --alluredir=D:\PyCharmProjects\ums_uiautomator\result\19\allure_raw
+[2025-09-08 17:05:25,787][INFO] ============================= test session starts =============================
+[2025-09-08 17:05:25,788][INFO] platform win32 -- Python 3.9.13, pytest-7.1.2, pluggy-1.6.0 -- C:\ProgramData\Anaconda3\python.exe
+[2025-09-08 17:05:25,792][INFO] cachedir: .pytest_cache
+[2025-09-08 17:05:25,793][INFO] metadata: {'Python': '3.9.13', 'Platform': 'Windows-10-10.0.26100-SP0', 'Packages': {'pytest': '7.1.2', 'py': '1.11.0', 'pluggy': '1.6.0'}, 'Plugins': {'allure-pytest': '2.9.45', 'anyio': '1.3.1', 'langsmith': '0.4.20', 'html': '3.1.1', 'metadata': '2.0.1'}, 'JAVA_HOME': 'C:\\Program Files\\Java\\jdk1.8.0_221'}
+[2025-09-08 17:05:25,797][INFO] rootdir: D:\PyCharmProjects\ums_uiautomator
+[2025-09-08 17:05:25,797][INFO] plugins: allure-pytest-2.9.45, anyio-1.3.1, langsmith-0.4.20, html-3.1.1, metadata-2.0.1
+[2025-09-08 17:05:25,799][INFO] collecting ... collected 4 items
+[2025-09-08 17:05:25,799][INFO] 
+[2025-09-08 17:05:26,197][INFO] test_suite/tmp_project.py::test_case01 ERROR
+[2025-09-08 17:05:26,200][INFO] test_suite/tmp_project.py::test_case02 SKIPPED (Skip if demo)
+[2025-09-08 17:05:26,232][INFO] test_suite/tmp_project.py::test_case03 ERROR
+[2025-09-08 17:05:26,269][INFO] test_suite/tmp_project.py::test_case04 ERROR
+[2025-09-08 17:05:26,270][INFO] 
+[2025-09-08 17:05:26,271][INFO] =================================== ERRORS ====================================
+[2025-09-08 17:05:26,271][INFO] ________________________ ERROR at setup of test_case01 ________________________
+[2025-09-08 17:05:26,272][INFO] 
+[2025-09-08 17:05:26,273][INFO] device_id = 'AF8YVB1805003480'
+[2025-09-08 17:05:26,273][INFO] 
+[2025-09-08 17:05:26,273][INFO] @pytest.fixture(scope="function")
+[2025-09-08 17:05:26,275][INFO] def setup_and_teardown_demo(device_id):
+[2025-09-08 17:05:26,275][INFO] """
+[2025-09-08 17:05:26,276][INFO] 通用前置：亮屏
+[2025-09-08 17:05:26,276][INFO] 通用收尾：回到主页面
+[2025-09-08 17:05:26,276][INFO] d 为 UI 测试的核心对象，除非知道后果否则请勿修改
+[2025-09-08 17:05:26,277][INFO] @Author: CN-LanBao
+[2025-09-08 17:05:26,277][INFO] @Create: 2022/5/9 17:32
+[2025-09-08 17:05:26,278][INFO] :return: Uiautomator
+[2025-09-08 17:05:26,278][INFO] """
+[2025-09-08 17:05:26,279][INFO] >       d.screen_on()
+[2025-09-08 17:05:26,279][INFO] E       AttributeError: 'NoneType' object has no attribute 'screen_on'
+[2025-09-08 17:05:26,280][INFO] 
+[2025-09-08 17:05:26,280][INFO] test_suite\conftest.py:51: AttributeError
+[2025-09-08 17:05:26,281][INFO] ________________________ ERROR at setup of test_case03 ________________________
+[2025-09-08 17:05:26,281][INFO] 
+[2025-09-08 17:05:26,282][INFO] device_id = 'AF8YVB1805003480'
+[2025-09-08 17:05:26,283][INFO] 
+[2025-09-08 17:05:26,283][INFO] @pytest.fixture(scope="function")
+[2025-09-08 17:05:26,284][INFO] def setup_and_teardown_demo(device_id):
+[2025-09-08 17:05:26,284][INFO] """
+[2025-09-08 17:05:26,284][INFO] 通用前置：亮屏
+[2025-09-08 17:05:26,286][INFO] 通用收尾：回到主页面
+[2025-09-08 17:05:26,287][INFO] d 为 UI 测试的核心对象，除非知道后果否则请勿修改
+[2025-09-08 17:05:26,287][INFO] @Author: CN-LanBao
+[2025-09-08 17:05:26,288][INFO] @Create: 2022/5/9 17:32
+[2025-09-08 17:05:26,288][INFO] :return: Uiautomator
+[2025-09-08 17:05:26,289][INFO] """
+[2025-09-08 17:05:26,289][INFO] >       d.screen_on()
+[2025-09-08 17:05:26,289][INFO] E       AttributeError: 'NoneType' object has no attribute 'screen_on'
+[2025-09-08 17:05:26,290][INFO] 
+[2025-09-08 17:05:26,290][INFO] test_suite\conftest.py:51: AttributeError
+[2025-09-08 17:05:26,292][INFO] ________________________ ERROR at setup of test_case04 ________________________
+[2025-09-08 17:05:26,292][INFO] 
+[2025-09-08 17:05:26,292][INFO] device_id = 'AF8YVB1805003480'
+[2025-09-08 17:05:26,293][INFO] 
+[2025-09-08 17:05:26,293][INFO] @pytest.fixture(scope="function")
+[2025-09-08 17:05:26,293][INFO] def setup_and_teardown_demo(device_id):
+[2025-09-08 17:05:26,294][INFO] """
+[2025-09-08 17:05:26,294][INFO] 通用前置：亮屏
+[2025-09-08 17:05:26,295][INFO] 通用收尾：回到主页面
+[2025-09-08 17:05:26,295][INFO] d 为 UI 测试的核心对象，除非知道后果否则请勿修改
+[2025-09-08 17:05:26,295][INFO] @Author: CN-LanBao
+[2025-09-08 17:05:26,297][INFO] @Create: 2022/5/9 17:32
+[2025-09-08 17:05:26,297][INFO] :return: Uiautomator
+[2025-09-08 17:05:26,298][INFO] """
+[2025-09-08 17:05:26,298][INFO] >       d.screen_on()
+[2025-09-08 17:05:26,298][INFO] E       AttributeError: 'NoneType' object has no attribute 'screen_on'
+[2025-09-08 17:05:26,299][INFO] 
+[2025-09-08 17:05:26,299][INFO] test_suite\conftest.py:51: AttributeError
+[2025-09-08 17:05:26,301][INFO] =========================== short test summary info ===========================
+[2025-09-08 17:05:26,301][INFO] ERROR test_suite/tmp_project.py::test_case01 - AttributeError: 'NoneType' obj...
+[2025-09-08 17:05:26,302][INFO] ERROR test_suite/tmp_project.py::test_case03 - AttributeError: 'NoneType' obj...
+[2025-09-08 17:05:26,302][INFO] ERROR test_suite/tmp_project.py::test_case04 - AttributeError: 'NoneType' obj...
+[2025-09-08 17:05:26,303][INFO] ======================== 1 skipped, 3 errors in 0.48s =========================
+[2025-09-08 17:05:26,391][ERROR] 测试异常：pytest 执行失败，返回码：1
