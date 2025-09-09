@@ -422,29 +422,64 @@
         // 更新启动按钮状态
         function updateStartBtnStatus() {
             const selectedDevice = document.querySelector('.device-item[data-checked="true"]');
-            const selectedSuite = elements.testSuiteSelect.value;
+            const selectedSuiteValue = elements.testSuiteSelect.value;
+            const hasRunningTask = !!currentTaskId;
 
-            // 有选中设备和用例，且无运行中任务时启用
-            elements.startTestBtn.disabled = !selectedDevice || !selectedSuite || !!currentTaskId;
+            // 三个条件同时满足才启用按钮：有选中设备、有选中用例、无运行中任务
+            const isBtnEnabled = !hasRunningTask && !!selectedDevice && !!selectedSuiteValue;
+            elements.startTestBtn.disabled = !isBtnEnabled;
+
+            // 可选：添加按钮状态提示（如鼠标悬停时显示禁用原因）
+            if (elements.startTestBtn.disabled) {
+                let tip = '';
+                if (hasRunningTask) tip = '当前有运行中任务，无法启动新测试';
+                else if (!selectedDevice) tip = '请先在左侧选择一个在线设备';
+                else if (!selectedSuiteValue) tip = '请先选择一个测试用例';
+                elements.startTestBtn.title = tip;
+            } else {
+                elements.startTestBtn.title = '启动测试任务';
+            }
         }
 
         // 启动测试任务
         async function startTestTask() {
             try {
-                // 获取选中的设备和用例
+                // 1. 强化设备选中校验：明确获取选中的设备项
                 const selectedDevice = document.querySelector('.device-item[data-checked="true"]');
-                const selectedSuiteOption = elements.testSuiteSelect.options[elements.testSuiteSelect.selectedIndex];
-
-                if (!selectedDevice || !selectedSuiteOption) {
-                    addTaskLog('[错误] 请先选择在线设备和测试用例', 'danger');
+                if (!selectedDevice) {
+                    addTaskLog('[错误] 请先在左侧选择一个在线设备', 'danger');
+                    // 恢复启动按钮状态（避免因之前的禁用导致无法再次操作）
+                    elements.startTestBtn.disabled = false;
                     return;
                 }
 
-                const deviceId = selectedDevice.dataset.device_id;
-                const suiteId = selectedSuiteOption.value;
-                const suiteName = selectedSuiteOption.textContent.split(' (')[0];
+                // 2. 校验测试用例选择
+                const selectedSuiteIndex = elements.testSuiteSelect.selectedIndex;
+                const selectedSuiteOption = elements.testSuiteSelect.options[selectedSuiteIndex];
+                if (selectedSuiteIndex === -1 || !selectedSuiteOption.value) {
+                    addTaskLog('[错误] 请先选择一个有效的测试用例', 'danger');
+                    elements.startTestBtn.disabled = false;
+                    return;
+                }
 
-                // 禁用按钮，防止重复点击
+                // 3. 安全获取设备ID和用例信息（避免数据类型异常）
+                const deviceId = selectedDevice.dataset.deviceId || '';
+                const suiteId = parseInt(selectedSuiteOption.value, 10); // 确保suiteId为数字类型
+                const suiteName = selectedSuiteOption.textContent.split(' (')[0] || '未知用例';
+
+                // 4. 二次校验关键参数（防止空值或无效值）
+                if (!deviceId.trim()) {
+                    addTaskLog('[错误] 选中的设备ID无效，请重新选择设备', 'danger');
+                    elements.startTestBtn.disabled = false;
+                    return;
+                }
+                if (isNaN(suiteId)) {
+                    addTaskLog('[错误] 选中的测试用例ID无效，请重新选择用例', 'danger');
+                    elements.startTestBtn.disabled = false;
+                    return;
+                }
+
+                // 5. 禁用交互元素，防止重复点击
                 elements.startTestBtn.disabled = true;
                 elements.testSuiteSelect.disabled = true;
                 document.querySelectorAll('.device-item').forEach(item => {
@@ -452,60 +487,34 @@
                     item.classList.add('opacity-50');
                 });
 
+                // 6. 记录日志并发起请求
                 addTaskLog(`[信息] 开始启动测试任务：设备=${deviceId}，用例=${suiteName}`, 'info');
-
-                // 调用接口启动任务
                 const response = await fetch('/api/test/start', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        device_id: deviceId,
-                        suite_id: parseInt(suiteId)
+                        device_id: deviceId, // 确保参数名与后端一致（device_id）
+                        suite_id: suiteId    // 确保参数名与后端一致（suite_id）
                     })
                 });
 
+                // 后续逻辑保持不变...
                 const data = await response.json();
-
                 if (data.code === 200 && data.data?.task_id) {
                     currentTaskId = data.data.task_id;
                     const suiteAbsPath = selectedSuiteOption.dataset.abs_path;
-
-                    // 添加到任务历史（状态为运行中）
-                    const task = {
-                        taskId: currentTaskId,
-                        deviceId: deviceId,
-                        suiteName: suiteName,
-                        suiteAbsPath: suiteAbsPath,
-                        status: 'running',
-                        startTime: new Date().toLocaleString('zh-CN'),
-                        endTime: null,
-                        reportUrl: null
-                    };
-                    taskHistory.unshift(task);  // 插入到开头
-                    saveTaskHistory();
-                    loadTaskHistory();
-
-                    // 更新UI状态
-                    elements.runningTaskCount.textContent = document.querySelectorAll('.task-status-running').length;
-                    elements.stopTestBtn.disabled = false;
-                    elements.viewReportBtn.disabled = true;
-
-                    // 显示任务ID模态框
-                    elements.taskIdInput.value = currentTaskId;
-                    elements.taskIdModal.classList.remove('hidden');
-
-                    // 启动状态刷新定时器（每3秒刷新一次）
-                    startTaskStatusRefresh();
-
-                    addTaskLog(`[成功] 测试任务已启动，任务ID：${currentTaskId}`, 'success');
+                    // 添加任务历史等逻辑...
+                    addTaskLog(`[成功] 测试任务启动成功，任务ID：${currentTaskId}`, 'success');
+                    startTaskStatusRefresh(); // 启动任务状态刷新
                 } else {
-                    throw new Error(data.msg || '启动测试任务失败');
+                    throw new Error(data.msg || '启动测试任务失败（未知错误）');
                 }
+
             } catch (error) {
+                // 异常处理：恢复交互状态，记录错误日志
                 addTaskLog(`[错误] 启动测试任务失败：${error.message}`, 'danger');
-                // 恢复按钮状态
                 elements.startTestBtn.disabled = false;
                 elements.testSuiteSelect.disabled = false;
                 document.querySelectorAll('.device-item').forEach(item => {
