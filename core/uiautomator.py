@@ -1,5 +1,3 @@
-# @Time     : 2024/5/20 10:30
-# @Author   : CN-LanBao
 # -*- coding: utf-8 -*-
 import subprocess
 import time

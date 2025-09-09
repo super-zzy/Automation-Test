@@ -1,5 +1,3 @@
-# @Time     : 2024/5/20 11:00
-# @Author   : CN-LanBao
 # -*- coding: utf-8 -*-
 import subprocess
 import weakref

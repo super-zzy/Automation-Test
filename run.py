@@ -1,5 +1,3 @@
-# @Time     : 2024/5/20 16:30
-# @Author   : CN-LanBao
 # -*- coding: utf-8 -*-
 import os
 import sys  # 必须最先导入 sys 模块

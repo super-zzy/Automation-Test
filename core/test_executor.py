@@ -1,5 +1,3 @@
-# @Time     : 2024/5/20 11:30
-# @Author   : CN-LanBao
 # -*- coding: utf-8 -*-
 import os
 import subprocess
@@ -68,7 +66,7 @@ class TestExecutor:
             pytest_cmd,
             capture_output=True,
             text=True,
-            encoding="utf-8",
+            encoding="gbk",
             timeout=GlobalConfig["test"]["pytest_timeout"] + 60  # 预留60秒清理时间
         )
 
@@ -102,7 +100,7 @@ class TestExecutor:
             allure_cmd,
             capture_output=True,
             text=True,
-            encoding="utf-8"
+            encoding="gbk"
         )
 
         # 校验报告
