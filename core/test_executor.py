@@ -257,7 +257,8 @@ class TestExecutor:
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
-                timeout=self.allure_config["generate_timeout"]
+                timeout=self.allure_config["generate_timeout"],
+                shell=True
             )
             report_result["generate_duration"] = round(time.time() - start_time, 2)
 
