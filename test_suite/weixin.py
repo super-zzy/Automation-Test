@@ -6,8 +6,8 @@ import allure
 def d(setup_and_teardown_demo):
     """
     额外前置收尾，将实例化对象重命名
-    @Author: CN-LanBao
-    @Create: 2022/5/10 10:19
+    @Author: zyli3
+    @Create: 2025/9/15 18:00
     :return: Uiautomator
     """
     print("Setup")

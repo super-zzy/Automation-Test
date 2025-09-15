@@ -1,5 +1,5 @@
-# @Time     : 2024/5/20 16:00
-# @Author   : CN-LanBao
+# @Time     : 2025/9/15 18:00
+# @Author   : zyli3
 # -*- coding: utf-8 -*-
 import pytest
 from core.device_manager import DeviceManager

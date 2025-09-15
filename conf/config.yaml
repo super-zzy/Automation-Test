@@ -1,4 +1,4 @@
-author: CN-LanBao
+author: zyli3
 env: dev  # 环境（dev/prod/test）
 path:
   test_suite_dir: "./test_suite"  # 测试用例目录
