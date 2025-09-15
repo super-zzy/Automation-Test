@@ -1,6 +1,0 @@
-[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, screen_on(), None
-[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, click(x=100, y=100), None
-[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, click(x=200, y=200), None
-[35mDEBUG   [0m AF8YVB1805003480:log_util.py:46 Debug信息
-[32mINFO    [0m AF8YVB1805003480:log_util.py:49 INFO 信息
-[32mINFO    [0m AF8YVB1805003480:log_util.py:49 AF8YVB1805003480, press(key=home), True

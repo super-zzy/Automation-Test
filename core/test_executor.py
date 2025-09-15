@@ -5,6 +5,7 @@ import os
 import subprocess
 import shutil
 import time
+import json
 from datetime import datetime
 from typing import Tuple, Dict, Optional
 from util.log_util import LogUtil, TempLog
@@ -27,34 +28,31 @@ class TestExecutor:
         self.allure_raw_dir = safe_join(self.task_report_dir, "allure_raw")
         self.allure_html_dir = safe_join(self.task_report_dir, "allure_html")
         self.task_log_path = safe_join(self.task_report_dir, f"task_{task_id}.log")
-        # 新增：报告元数据文件路径（记录报告生成详情）
         self.report_meta_path = safe_join(self.task_report_dir, "report_meta.json")
-        # 新增：Allure命令执行日志路径
         self.allure_log_path = safe_join(self.task_report_dir, "allure_generate.log")
 
-        # 新增：报告生成配置
+        # 报告生成配置
         self.allure_config = {
             "clean_before_generate": GlobalConfig["test"]["allure_clean"],
-            "generate_timeout": GlobalConfig["test"].get("allure_generate_timeout", 300),  # 5分钟超时默认值
-            "report_compress": GlobalConfig["test"].get("report_compress", True),  # 是否压缩HTML报告
-            "compress_format": GlobalConfig["test"].get("report_compress_format", "zip"),  # 压缩格式
-            "keep_raw_data": GlobalConfig["test"].get("keep_allure_raw", True)  # 是否保留原始数据
+            "generate_timeout": GlobalConfig["test"].get("allure_generate_timeout", 300),
+            "report_compress": GlobalConfig["test"].get("report_compress", True),
+            "compress_format": GlobalConfig["test"].get("report_compress_format", "zip"),
+            "keep_raw_data": GlobalConfig["test"].get("keep_allure_raw", True)
         }
 
     def prepare(self) -> None:
         """准备测试环境（清理旧目录、创建新目录）"""
         self.log.info(f"准备测试环境：{self.task_report_dir}")
 
-        # 清理旧报告（避免残留）
+        # 清理旧报告
         if os.path.exists(self.task_report_dir):
-            # 优化：清理前记录旧目录大小，增加可追溯性
             old_dir_size = get_file_size(self.task_report_dir)
             self.log.warning(
                 f"清理旧报告目录：{self.task_report_dir}（预估大小：{old_dir_size:.2f}MB）"
             )
             shutil.rmtree(self.task_report_dir)
 
-        # 创建新目录（含元数据和Allure日志目录）
+        # 创建新目录
         dirs_to_create = [self.allure_raw_dir, self.allure_html_dir]
         for dir_path in dirs_to_create:
             ensure_dir_exists(dir_path)
@@ -62,7 +60,7 @@ class TestExecutor:
 
         self.log.info(f"测试目录初始化完成：{self.task_report_dir}")
 
-        # 校验用例路径（增加文件可读性校验）
+        # 校验用例路径
         if not os.path.exists(self.suite_abs_path):
             raise FileNotFoundError(f"测试用例不存在：{self.suite_abs_path}")
         if not os.path.isfile(self.suite_abs_path):
@@ -77,19 +75,19 @@ class TestExecutor:
         """执行Pytest测试（生成Allure原始报告）"""
         self.log.info("开始执行Pytest测试...")
 
-        # Pytest命令（带设备ID和任务ID参数，供conftest.py使用）
+        # Pytest命令
         pytest_cmd = [
             "python", "-m", "pytest",
             self.suite_abs_path,
             f"--device_id={self.device_id}",
             f"--task_id={self.task_id}",
             f"--alluredir={self.allure_raw_dir}",
-            "-v",  # 详细日志
-            "--tb=short",  # 精简堆栈
-            f"--timeout={GlobalConfig['test']['pytest_timeout']}"  # 超时时间
+            "-v",
+            "--tb=short",
+            f"--timeout={GlobalConfig['test']['pytest_timeout']}"
         ]
 
-        # 执行命令（捕获输出）
+        # 执行命令
         start_time = time.time()
         try:
             result = subprocess.run(
@@ -97,7 +95,7 @@ class TestExecutor:
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
-                timeout=GlobalConfig["test"]["pytest_timeout"] + 60  # 预留60秒清理时间
+                timeout=GlobalConfig["test"]["pytest_timeout"] + 60
             )
             exec_duration = round(time.time() - start_time, 2)
             self.log.info(f"Pytest执行完成（耗时：{exec_duration}秒，返回码：{result.returncode}）")
@@ -106,7 +104,7 @@ class TestExecutor:
             self.log.error(f"Pytest执行超时（耗时：{exec_duration}秒，超过{GlobalConfig['test']['pytest_timeout']}秒）")
             raise
 
-        # 保存执行日志（优化日志格式，增加执行统计）
+        # 保存执行日志
         with open(self.task_log_path, "w", encoding="utf-8") as f:
             log_content = [
                 f"=== 任务{self.task_id} Pytest执行日志 ===",
@@ -121,7 +119,7 @@ class TestExecutor:
             ]
             f.write("\n".join(log_content))
 
-        # 校验Allure原始数据生成情况
+        # 校验Allure原始数据
         if not os.listdir(self.allure_raw_dir):
             self.log.warning("Allure原始报告目录为空，可能Pytest未生成测试结果")
 
@@ -129,21 +127,19 @@ class TestExecutor:
         return result.returncode, result.stdout, result.stderr
 
     def _generate_allure_cmd(self) -> list:
-        """构建Allure报告生成命令（独立方法，便于维护）"""
+        """构建Allure报告生成命令"""
         allure_cmd = [
             "allure", "generate",
             self.allure_raw_dir,
             "-o", self.allure_html_dir
         ]
-        # 添加清理参数（根据配置）
         if self.allure_config["clean_before_generate"]:
             allure_cmd.append("--clean")
-            self.log.debug("Allure生成命令将包含--clean参数（清理旧HTML报告）")
-        # 添加报告生成参数（可选：指定报告标题、logo等）
+            self.log.debug("Allure生成命令包含--clean参数")
         if GlobalConfig.get("allure", {}).get("report_title"):
             report_title = GlobalConfig["allure"]["report_title"].replace("{{task_id}}", self.task_id)
             allure_cmd.extend(["--title", report_title])
-            self.log.debug(f"Allure报告标题已设置：{report_title}")
+            self.log.debug(f"Allure报告标题：{report_title}")
         return allure_cmd
 
     def _save_allure_log(self, cmd: list, stdout: str, stderr: str, duration: float) -> None:
@@ -163,9 +159,9 @@ class TestExecutor:
         self.log.info(f"Allure生成日志已保存：{self.allure_log_path}")
 
     def _compress_html_report(self) -> Optional[str]:
-        """压缩HTML报告（支持zip格式）"""
+        """压缩HTML报告"""
         if not self.allure_config["report_compress"]:
-            self.log.debug("报告压缩功能已禁用（配置：report_compress=False）")
+            self.log.debug("报告压缩功能已禁用")
             return None
 
         if not os.path.exists(self.allure_html_dir):
@@ -178,7 +174,6 @@ class TestExecutor:
 
         try:
             start_time = time.time()
-            # 执行压缩（递归压缩目录下所有文件）
             shutil.make_archive(
                 base_name=compress_path.replace(f".{self.allure_config['compress_format']}", ""),
                 format=self.allure_config["compress_format"],
@@ -190,10 +185,10 @@ class TestExecutor:
                 f"HTML报告压缩完成：{compress_path}（大小：{compress_size:.2f}MB，耗时：{compress_duration}秒）"
             )
 
-            # 可选：压缩后删除原始HTML目录（根据配置）
+            # 压缩后删除原始HTML目录（可选）
             if not self.allure_config["keep_raw_data"]:
                 shutil.rmtree(self.allure_html_dir)
-                self.log.debug(f"已删除原始HTML目录：{self.allure_html_dir}（配置：keep_allure_raw=False）")
+                self.log.debug(f"已删除原始HTML目录：{self.allure_html_dir}")
 
             return compress_path
         except Exception as e:
@@ -201,8 +196,7 @@ class TestExecutor:
             return None
 
     def _save_report_meta(self, report_info: Dict) -> None:
-        """保存报告元数据（JSON格式，便于后续查询）"""
-        import json
+        """保存报告元数据"""
         meta_data = {
             "task_id": self.task_id,
             "device_id": self.device_id,
@@ -225,10 +219,7 @@ class TestExecutor:
             self.log.error(f"报告元数据保存失败：{str(e)}", exc_info=True)
 
     def generate_allure_report(self) -> Dict:
-        """
-        生成Allure HTML报告（优化版）
-        返回：报告详情字典（含路径、压缩包路径、元数据等）
-        """
+        """生成Allure HTML报告"""
         self.log.info("开始生成Allure HTML报告...")
         report_result = {
             "status": "failed",
@@ -238,18 +229,17 @@ class TestExecutor:
             "generate_duration": 0
         }
 
-        # 1. 构建Allure命令
+        # 构建Allure命令
         allure_cmd = self._generate_allure_cmd()
         self.log.debug(f"Allure生成命令：{' '.join(allure_cmd)}")
 
-        # 新增：校验Allure原始报告目录是否存在
+        # 校验Allure原始报告目录
         if not os.path.exists(self.allure_raw_dir):
             raise FileNotFoundError(f"Allure原始报告目录不存在：{self.allure_raw_dir}")
-        # 新增：校验目录是否有读写权限
         if not os.access(self.allure_raw_dir, os.R_OK | os.W_OK):
             raise PermissionError(f"无权限读写Allure原始报告目录：{self.allure_raw_dir}")
 
-        # 2. 执行Allure命令（带超时控制）
+        # 执行Allure命令
         start_time = time.time()
         try:
             result = subprocess.run(
@@ -262,7 +252,7 @@ class TestExecutor:
             )
             report_result["generate_duration"] = round(time.time() - start_time, 2)
 
-            # 3. 保存Allure执行日志
+            # 保存Allure执行日志
             self._save_allure_log(
                 cmd=allure_cmd,
                 stdout=result.stdout,
@@ -270,25 +260,25 @@ class TestExecutor:
                 duration=report_result["generate_duration"]
             )
 
-            # 4. 校验命令执行结果
+            # 校验命令执行结果
             if result.returncode != 0:
                 error_msg = f"Allure命令执行失败（返回码：{result.returncode}），错误详情：{result.stderr[:500]}"
                 report_result["error_msg"] = error_msg
                 raise RuntimeError(error_msg)
 
-            # 5. 校验报告入口文件
+            # 校验报告入口文件
             index_html = safe_join(self.allure_html_dir, "index.html")
             if not os.path.exists(index_html):
                 error_msg = f"报告入口文件不存在：{index_html}"
                 report_result["error_msg"] = error_msg
                 raise FileNotFoundError(error_msg)
 
-            # 6. 压缩HTML报告（可选）
+            # 压缩HTML报告
             compress_path = self._compress_html_report()
             if compress_path:
                 report_result["compress_path"] = compress_path
 
-            # 7. 更新报告结果状态
+            # 更新报告结果状态
             report_result["status"] = "success"
             report_result["index_path"] = index_html
             report_size = get_file_size(self.allure_html_dir)
@@ -305,23 +295,23 @@ class TestExecutor:
             report_result["error_msg"] = error_msg
             self.log.error(f"Allure报告生成失败：{error_msg}", exc_info=True)
         finally:
-            # 8. 保存报告元数据（无论成功失败）
+            # 保存报告元数据
             self._save_report_meta(report_result)
 
         return report_result
 
     def execute(self) -> dict:
-        """完整执行测试流程（准备-执行-生成报告）"""
+        """完整执行测试流程"""
         try:
             self.prepare()
 
             # 执行Pytest
             pytest_returncode, pytest_stdout, pytest_stderr = self.run_pytest()
 
-            # 生成报告（即使Pytest失败也生成报告）
+            # 生成报告
             report_result = self.generate_allure_report()
 
-            # 构建返回结果（整合Pytest和报告信息）
+            # 构建返回结果
             return {
                 "status": "success" if (pytest_returncode == 0 and report_result["status"] == "success")
                           else "success_with_failure" if report_result["status"] == "success"
@@ -349,8 +339,7 @@ class TestExecutor:
             return self._fail_result(error_msg)
 
     def _fail_result(self, error_msg: str) -> dict:
-        """生成失败结果字典（补充报告相关信息）"""
-        # 即使执行失败，也尝试收集已生成的日志文件
+        """生成失败结果字典"""
         log_files = {
             "task_log_path": self.task_log_path if os.path.exists(self.task_log_path) else None,
             "allure_log_path": self.allure_log_path if os.path.exists(self.allure_log_path) else None,
@@ -360,9 +349,8 @@ class TestExecutor:
         return {
             "status": f"failed: {error_msg}",
             "end_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "error_msg": error_msg,
-            **log_files,  # 解包日志文件路径
+            "error_msg": error_msg,** log_files,
             "report_path": self.allure_html_dir if os.path.exists(self.allure_html_dir) else None,
-            "pytest_returncode": -1,  # 标记为未正常执行
+            "pytest_returncode": -1,
             "report_generate_duration": 0
         }

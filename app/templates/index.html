@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Android UI 自动化测试平台</title>
-    <!-- 引入 Tailwind CSS（现代CSS框架） -->
+    <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Font Awesome（图标库） -->
+    <!-- 引入 Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- 自定义Tailwind配置 -->
     <script>
@@ -193,36 +193,11 @@
     </main>
 
     <!-- 页脚 -->
-    <footer class="bg-white border-t border-gray-200 py-4 mt-8">
+    <footer class="bg-white border-t border-gray-200 py-4 mt-6">
         <div class="container mx-auto px-4 text-center text-light text-sm">
-            <p>© 2025 Android UI 自动化测试平台 | 设计与开发：CN-LanBao</p>
+            <p>© 2024 Android UI 自动化测试平台 | 设计与开发：CN-LanBao</p>
         </div>
     </footer>
-
-    <!-- 模态框：任务ID提示 -->
-    <div id="task-id-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">测试任务已启动</h3>
-                <button id="close-modal-btn" class="text-light hover:text-dark">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <div class="mb-4">
-                <p class="text-sm text-light mb-2">任务ID（用于查询状态）：</p>
-                <div class="flex items-center">
-                    <input type="text" id="task-id-input" class="flex-grow px-3 py-2 border border-gray-300 rounded-l-lg outline-none text-sm" readonly>
-                    <button id="copy-task-id-btn" class="bg-primary text-white px-3 py-2 rounded-r-lg hover:bg-primary/90 transition-colors">
-                        <i class="fa fa-copy"></i>
-                    </button>
-                </div>
-            </div>
-            <p class="text-sm text-light mb-4">任务正在后台执行，可在日志区查看实时状态</p>
-            <button id="goto-log-btn" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-primary/90 transition-colors">
-                查看任务日志
-            </button>
-        </div>
-    </div>
 
     <!-- JS 逻辑 -->
     <script>
@@ -254,22 +229,18 @@
             taskHistoryTable: document.getElementById('task-history-table'),
             clearHistoryBtn: document.getElementById('clear-history-btn'),
 
-            // 模态框
-            taskIdModal: document.getElementById('task-id-modal'),
-            taskIdInput: document.getElementById('task-id-input'),
-            copyTaskIdBtn: document.getElementById('copy-task-id-btn'),
-            closeModalBtn: document.getElementById('close-modal-btn'),
-            gotoLogBtn: document.getElementById('goto-log-btn'),
-
-            // 其他
+            // 刷新按钮
             refreshBtn: document.getElementById('refresh-btn')
         };
 
-        // 初始化页面
-        window.onload = async function() {
-            // 加载时间
+        // 初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 初始化时间显示
             updateCurrentTime();
             setInterval(updateCurrentTime, 1000);
+
+            // 初始化任务历史
+            initTaskHistory();
 
             // 加载设备列表和测试用例
             await Promise.all([
@@ -277,15 +248,61 @@
                 loadTestSuites()
             ]);
 
-            // 加载任务历史
-            loadTaskHistory();
+            // 绑定事件监听
+            bindEventListeners();
+        });
 
-            // 检查是否有运行中任务
-            checkRunningTasks();
+        // 事件绑定
+        function bindEventListeners() {
+            // 刷新按钮
+            elements.refreshBtn.addEventListener('click', async () => {
+                elements.refreshBtn.querySelector('i').classList.add('fa-spin');
+                await Promise.all([
+                    loadDeviceList(),
+                    loadTestSuites()
+                ]);
+                elements.refreshBtn.querySelector('i').classList.remove('fa-spin');
+            });
 
-            // 绑定事件
-            bindEvents();
-        };
+            // 设备刷新按钮
+            elements.refreshDeviceBtn.addEventListener('click', loadDeviceList);
+
+            // 用例选择变化时更新按钮状态
+            elements.testSuiteSelect.addEventListener('change', updateStartBtnStatus);
+
+            // 启动测试
+            elements.startTestBtn.addEventListener('click', startTestTask);
+
+            // 停止测试
+            elements.stopTestBtn.addEventListener('click', () => {
+                addTaskLog('[提示] 任务停止功能暂未实现，需后端接口支持', 'warning');
+            });
+
+            // 查看报告
+            elements.viewReportBtn.addEventListener('click', () => {
+                if (taskHistory.length === 0) {
+                    addTaskLog('[错误] 暂无测试报告可查看', 'danger');
+                    return;
+                }
+                const latestTask = taskHistory[0];
+                if (latestTask.reportUrl) {
+                    window.open(latestTask.reportUrl, '_blank');
+                } else {
+                    addTaskLog('[错误] 最新任务无报告可查看', 'danger');
+                }
+            });
+
+            // 清空任务历史
+            elements.clearHistoryBtn.addEventListener('click', () => {
+                if (confirm('确定要清空所有任务历史记录吗？此操作不可恢复！')) {
+                    localStorage.removeItem('taskHistory');
+                    taskHistory = [];
+                    renderTaskHistory();
+                    elements.viewReportBtn.disabled = true;
+                    addTaskLog('[提示] 任务历史已清空', 'info');
+                }
+            });
+        }
 
         // 更新当前时间
         function updateCurrentTime() {
@@ -300,7 +317,7 @@
             });
         }
 
-        // 加载在线设备列表
+        // 加载设备列表
         async function loadDeviceList() {
             try {
                 elements.deviceList.innerHTML = `
@@ -320,27 +337,29 @@
                     if (devices.length === 0) {
                         elements.deviceList.innerHTML = `
                             <div class="text-center text-light py-8">
-                                <i class="fa fa-exclamation-circle text-warning text-2xl mb-2"></i>
-                                <p>暂无在线设备</p>
-                                <p class="text-xs mt-2">请检查设备ADB连接或USB调试模式</p>
+                                <i class="fa fa-mobile text-2xl mb-2 opacity-50"></i>
+                                <p>未发现在线设备，请检查ADB连接</p>
                             </div>
                         `;
                         elements.startTestBtn.disabled = true;
                         return;
                     }
 
-                    // 渲染设备列表（单选）
+                    // 渲染设备列表
                     elements.deviceList.innerHTML = devices.map(device => `
-                        <div class="device-item border border-gray-200 rounded-lg p-3 cursor-pointer hover:border-primary transition-colors ${device.checked ? 'border-primary bg-primary/5' : ''}"
+                        <div class="border border-gray-200 rounded-lg p-3 hover:border-primary transition-colors cursor-pointer device-item"
                              data-device-id="${device.device_id}">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="font-medium">${device.device_id}</p>
-                                    <p class="text-xs text-light mt-1">ATX版本: ${device.atx_version || '未知'}</p>
+                                    <h4 class="font-medium">${device.device_name || device.device_id}</h4>
+                                    <p class="text-sm text-light mt-1">
+                                        <span>型号：${device.model || '未知'}</span> |
+                                        <span>Android ${device.android_version || '未知'}</span>
+                                    </p>
                                 </div>
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center ${device.checked ? 'border-primary bg-primary' : ''}">
-                                    ${device.checked ? '<i class="fa fa-check text-white text-xs"></i>' : ''}
-                                </div>
+                                <span class="bg-success/10 text-success text-xs px-2 py-1 rounded-full">
+                                    在线
+                                </span>
                             </div>
                         </div>
                     `).join('');
@@ -348,23 +367,18 @@
                     // 绑定设备选择事件
                     document.querySelectorAll('.device-item').forEach(item => {
                         item.addEventListener('click', () => {
-                            // 取消其他设备选中状态
-                            document.querySelectorAll('.device-item').forEach(el => {
-                                el.classList.remove('border-primary', 'bg-primary/5');
-                                el.querySelector('.rounded-full').classList.remove('border-primary', 'bg-primary');
-                                el.querySelector('.rounded-full').innerHTML = '';
-                                el.dataset.checked = 'false';
-                            });
-                            // 设置当前设备选中状态
+                            document.querySelectorAll('.device-item').forEach(i =>
+                                i.classList.remove('border-primary', 'bg-primary/5')
+                            );
                             item.classList.add('border-primary', 'bg-primary/5');
-                            item.querySelector('.rounded-full').classList.add('border-primary', 'bg-primary');
-                            item.querySelector('.rounded-full').innerHTML = '<i class="fa fa-check text-white text-xs"></i>';
-                            item.dataset.checked = 'true';
-
-                            // 更新启动按钮状态
                             updateStartBtnStatus();
                         });
                     });
+
+                    // 默认选中第一个设备
+                    if (devices.length > 0) {
+                        document.querySelector('.device-item').classList.add('border-primary', 'bg-primary/5');
+                    }
                 } else {
                     throw new Error(data.msg || '加载设备列表失败');
                 }
@@ -372,14 +386,14 @@
                 elements.deviceList.innerHTML = `
                     <div class="text-center text-danger py-8">
                         <i class="fa fa-exclamation-circle text-2xl mb-2"></i>
-                        <p>加载设备失败：${error.message}</p>
+                        <p>${error.message}</p>
                     </div>
                 `;
-                console.error('加载设备列表错误:', error);
+                console.error('加载设备列表失败:', error);
             }
         }
 
-        // 加载测试用例列表
+        // 加载测试用例
         async function loadTestSuites() {
             try {
                 elements.testSuiteSelect.innerHTML = '<option value="" disabled selected>加载用例中...</option>';
@@ -413,217 +427,173 @@
                     throw new Error(data.msg || '加载测试用例失败');
                 }
             } catch (error) {
-                elements.testSuiteSelect.innerHTML = '<option value="" disabled selected>加载用例失败</option>';
-                console.error('加载测试用例错误:', error);
-                addTaskLog(`[错误] 加载测试用例失败：${error.message}`, 'danger');
+                elements.testSuiteSelect.innerHTML = `
+                    <option value="" disabled selected>加载用例失败</option>
+                `;
+                elements.startTestBtn.disabled = true;
+                addTaskLog(`[错误] 加载测试用例失败: ${error.message}`, 'danger');
+                console.error('加载测试用例失败:', error);
             }
         }
 
         // 更新启动按钮状态
         function updateStartBtnStatus() {
-            const selectedDevice = document.querySelector('.device-item[data-checked="true"]');
-            const selectedSuiteValue = elements.testSuiteSelect.value;
-            const hasRunningTask = !!currentTaskId;
+            const selectedDevice = document.querySelector('.device-item.border-primary');
+            const selectedSuite = elements.testSuiteSelect.value;
+            const isRunning = currentTaskId !== null;
 
-            // 三个条件同时满足才启用按钮：有选中设备、有选中用例、无运行中任务
-            const isBtnEnabled = !hasRunningTask && !!selectedDevice && !!selectedSuiteValue;
-            elements.startTestBtn.disabled = !isBtnEnabled;
+            elements.startTestBtn.disabled = !selectedDevice || !selectedSuite || isRunning;
+            elements.viewReportBtn.disabled = taskHistory.length === 0;
+        }
 
-            // 可选：添加按钮状态提示（如鼠标悬停时显示禁用原因）
-            if (elements.startTestBtn.disabled) {
-                let tip = '';
-                if (hasRunningTask) tip = '当前有运行中任务，无法启动新测试';
-                else if (!selectedDevice) tip = '请先在左侧选择一个在线设备';
-                else if (!selectedSuiteValue) tip = '请先选择一个测试用例';
-                elements.startTestBtn.title = tip;
-            } else {
-                elements.startTestBtn.title = '启动测试任务';
-            }
+        // 添加任务日志
+        function addTaskLog(message, type = 'info') {
+            const logTypes = {
+                info: 'text-dark',
+                success: 'text-success',
+                warning: 'text-warning',
+                danger: 'text-danger'
+            };
+
+            const logElement = document.createElement('p');
+            logElement.className = `${logTypes[type] || 'text-dark'} mb-1`;
+            logElement.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+
+            elements.taskLog.appendChild(logElement);
+            elements.taskLog.scrollTop = elements.taskLog.scrollHeight;
         }
 
         // 启动测试任务
         async function startTestTask() {
             try {
-                // 1. 强化设备选中校验：明确获取选中的设备项
-                const selectedDevice = document.querySelector('.device-item[data-checked="true"]');
-                if (!selectedDevice) {
-                    addTaskLog('[错误] 请先在左侧选择一个在线设备', 'danger');
-                    // 恢复启动按钮状态（避免因之前的禁用导致无法再次操作）
-                    elements.startTestBtn.disabled = false;
+                // 获取选中的设备和用例
+                const selectedDevice = document.querySelector('.device-item.border-primary');
+                const selectedSuiteId = elements.testSuiteSelect.value;
+
+                if (!selectedDevice || !selectedSuiteId) {
+                    addTaskLog('[错误] 请先选择设备和测试用例', 'danger');
                     return;
                 }
 
-                // 2. 校验测试用例选择
-                const selectedSuiteIndex = elements.testSuiteSelect.selectedIndex;
-                const selectedSuiteOption = elements.testSuiteSelect.options[selectedSuiteIndex];
-                if (selectedSuiteIndex === -1 || !selectedSuiteOption.value) {
-                    addTaskLog('[错误] 请先选择一个有效的测试用例', 'danger');
-                    elements.startTestBtn.disabled = false;
-                    return;
-                }
+                const deviceId = selectedDevice.dataset.deviceId;
+                const suiteName = elements.testSuiteSelect.options[elements.testSuiteSelect.selectedIndex].text;
 
-                // 3. 安全获取设备ID和用例信息（避免数据类型异常）
-                const deviceId = selectedDevice.dataset.deviceId || '';
-                const suiteId = parseInt(selectedSuiteOption.value, 10); // 确保suiteId为数字类型
-                const suiteName = selectedSuiteOption.textContent.split(' (')[0] || '未知用例';
+                // 发送启动测试请求
+                addTaskLog(`[信息] 正在启动测试任务（设备：${deviceId}，用例：${suiteName}）`, 'info');
 
-                // 4. 二次校验关键参数（防止空值或无效值）
-                if (!deviceId.trim()) {
-                    addTaskLog('[错误] 选中的设备ID无效，请重新选择设备', 'danger');
-                    elements.startTestBtn.disabled = false;
-                    return;
-                }
-                if (isNaN(suiteId)) {
-                    addTaskLog('[错误] 选中的测试用例ID无效，请重新选择用例', 'danger');
-                    elements.startTestBtn.disabled = false;
-                    return;
-                }
-
-                // 5. 禁用交互元素，防止重复点击
-                elements.startTestBtn.disabled = true;
-                elements.testSuiteSelect.disabled = true;
-                document.querySelectorAll('.device-item').forEach(item => {
-                    item.style.pointerEvents = 'none';
-                    item.classList.add('opacity-50');
-                });
-
-                // 6. 记录日志并发起请求
-                addTaskLog(`[信息] 开始启动测试任务：设备=${deviceId}，用例=${suiteName}`, 'info');
                 const response = await fetch('/api/test/start', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        device_id: deviceId, // 确保参数名与后端一致（device_id）
-                        suite_id: suiteId    // 确保参数名与后端一致（suite_id）
+                        device_id: deviceId,
+                        suite_id: parseInt(selectedSuiteId)
                     })
                 });
 
-                // 后续逻辑保持不变...
                 const data = await response.json();
+
                 if (data.code === 200 && data.data?.task_id) {
                     currentTaskId = data.data.task_id;
-                    const suiteAbsPath = selectedSuiteOption.dataset.abs_path;
-                    // 添加任务历史等逻辑...
-                    addTaskLog(`[成功] 测试任务启动成功，任务ID：${currentTaskId}`, 'success');
-                    startTaskStatusRefresh(); // 启动任务状态刷新
-                } else {
-                    throw new Error(data.msg || '启动测试任务失败（未知错误）');
-                }
+                    addTaskLog(`[成功] 测试任务已启动，任务ID：${currentTaskId}`, 'success');
 
+                    // 更新按钮状态
+                    elements.startTestBtn.disabled = true;
+                    elements.stopTestBtn.disabled = false;
+
+                    // 开始轮询任务状态
+                    startTaskStatusPolling();
+                } else {
+                    throw new Error(data.msg || '启动测试任务失败');
+                }
             } catch (error) {
-                // 异常处理：恢复交互状态，记录错误日志
-                addTaskLog(`[错误] 启动测试任务失败：${error.message}`, 'danger');
-                elements.startTestBtn.disabled = false;
-                elements.testSuiteSelect.disabled = false;
-                document.querySelectorAll('.device-item').forEach(item => {
-                    item.style.pointerEvents = 'auto';
-                    item.classList.remove('opacity-50');
-                });
-                console.error('启动测试任务错误:', error);
+                addTaskLog(`[错误] 启动测试任务失败: ${error.message}`, 'danger');
+                console.error('启动测试任务失败:', error);
             }
         }
 
-        // 启动任务状态刷新
-        function startTaskStatusRefresh() {
+        // 轮询任务状态
+        function startTaskStatusPolling() {
             // 清除之前的定时器
             if (refreshInterval) {
                 clearInterval(refreshInterval);
             }
 
-            // 立即刷新一次
-            refreshTaskStatus();
-
-            // 设置定时器（每3秒刷新一次）
-            refreshInterval = setInterval(refreshTaskStatus, 3000);
-        }
-
-        // 刷新任务状态
-        async function refreshTaskStatus() {
-            if (!currentTaskId) {
-                clearInterval(refreshInterval);
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/test/status/${currentTaskId}`);
-                const data = await response.json();
-
-                if (data.code === 200 && data.data) {
-                    const taskStatus = data.data.status;
-
-                    // 更新任务日志
-                    if (data.data.pytest_stdout) {
-                        // 提取最新日志（避免重复）
-                        const newLogs = data.data.pytest_stdout.split('\n').filter(line =>
-                            line && !elements.taskLog.textContent.includes(line)
-                        );
-                        newLogs.forEach(log => addTaskLog(`[测试日志] ${log}`, 'info'));
-                    }
-
-                    // 检查任务是否完成
-                    if (taskStatus.includes('success') || taskStatus.includes('failed')) {
-                        currentTaskId = null;
-                        clearInterval(refreshInterval);
-
-                        // 更新任务历史状态
-                        const taskIndex = taskHistory.findIndex(task => task.taskId === data.data.task_id);
-                        if (taskIndex !== -1) {
-                            taskHistory[taskIndex].status = taskStatus.includes('success') ? 'success' : 'failed';
-                            taskHistory[taskIndex].endTime = data.data.end_time;
-                            taskHistory[taskIndex].reportUrl = data.data.report_url;
-                            saveTaskHistory();
-                            loadTaskHistory();
-                        }
-
-                        // 恢复UI状态
-                        elements.stopTestBtn.disabled = true;
-                        elements.viewReportBtn.disabled = !data.data.report_url;
-                        elements.testSuiteSelect.disabled = false;
-                        document.querySelectorAll('.device-item').forEach(item => {
-                            item.style.pointerEvents = 'auto';
-                            item.classList.remove('opacity-50');
-                        });
-                        updateStartBtnStatus();
-
-                        // 更新运行中任务数
-                        elements.runningTaskCount.textContent = document.querySelectorAll('.task-status-running').length;
-
-                        addTaskLog(`[信息] 测试任务已完成，状态：${taskStatus}`, taskStatus.includes('success') ? 'success' : 'danger');
-                        if (data.data.report_url) {
-                            addTaskLog(`[信息] 测试报告地址：${data.data.report_url}`, 'success');
-                        }
-                    }
+            // 开始新的轮询
+            const poll = async () => {
+                if (!currentTaskId) {
+                    clearInterval(refreshInterval);
+                    return;
                 }
-            } catch (error) {
-                addTaskLog(`[错误] 刷新任务状态失败：${error.message}`, 'danger');
-                console.error('刷新任务状态错误:', error);
-            }
+
+                try {
+                    const response = await fetch(`/api/test/status/${currentTaskId}`);
+                    const data = await response.json();
+
+                    if (data.code === 200 && data.data) {
+                        const task = data.data;
+
+                        // 更新日志
+                        if (task.status === 'running') {
+                            addTaskLog(`[信息] 任务${currentTaskId}正在执行...`, 'info');
+                        } else if (task.status.includes('success') || task.status.includes('failed')) {
+                            // 任务已完成
+                            addTaskLog(`[信息] 任务${currentTaskId}已${task.status.includes('success') ? '成功' : '失败'}`,
+                                task.status.includes('success') ? 'success' : 'danger');
+
+                            // 保存任务到历史记录
+                            const suiteInfo = task.suite_info || {};
+                            const newTask = {
+                                id: currentTaskId,
+                                device: task.device_id,
+                                suite: suiteInfo.name || '未知用例',
+                                status: task.status.includes('success') ? '成功' : '失败',
+                                time: task.start_time || new Date().toLocaleString(),
+                                reportUrl: task.report_url || ''
+                            };
+                            taskHistory.unshift(newTask);
+                            localStorage.setItem('taskHistory', JSON.stringify(taskHistory));
+                            renderTaskHistory();
+
+                            // 停止轮询
+                            clearInterval(refreshInterval);
+                            currentTaskId = null;
+
+                            // 更新按钮状态
+                            elements.stopTestBtn.disabled = true;
+                            elements.startTestBtn.disabled = false;
+                            elements.viewReportBtn.disabled = false;
+                        }
+                    } else {
+                        throw new Error(data.msg || '获取任务状态失败');
+                    }
+                } catch (error) {
+                    addTaskLog(`[错误] 获取任务状态失败: ${error.message}`, 'danger');
+                    console.error('获取任务状态失败:', error);
+                }
+            };
+
+            // 立即执行一次，然后每3秒执行一次
+            poll();
+            refreshInterval = setInterval(poll, 3000);
         }
 
-        // 添加任务日志
-        function addTaskLog(message, type = 'info') {
-            const logElement = document.createElement('p');
-            const time = new Date().toLocaleTimeString('zh-CN');
+        // 初始化任务历史
+        function initTaskHistory() {
+            // 确保历史记录结构正确
+            taskHistory = taskHistory.map(task => ({
+                ...task,
+                reportUrl: task.reportUrl || task.report_url || '',
+                status: task.status || '未知'
+            }));
 
-            // 设置日志颜色
-            let textColor = 'text-dark';
-            if (type === 'success') textColor = 'text-success';
-            if (type === 'danger') textColor = 'text-danger';
-            if (type === 'warning') textColor = 'text-warning';
-            if (type === 'info') textColor = 'text-light';
-
-            logElement.className = `${textColor} mb-1`;
-            logElement.innerHTML = `<span class="text-xs text-gray-400">[${time}]</span> ${message}`;
-
-            // 添加到日志容器（滚动到底部）
-            elements.taskLog.appendChild(logElement);
-            elements.taskLog.scrollTop = elements.taskLog.scrollHeight;
+            renderTaskHistory();
+            elements.viewReportBtn.disabled = taskHistory.length === 0;
         }
 
-        // 加载任务历史
-        function loadTaskHistory() {
+        // 渲染任务历史
+        function renderTaskHistory() {
             if (taskHistory.length === 0) {
                 elements.taskHistoryTable.innerHTML = `
                     <tr>
@@ -636,156 +606,31 @@
                 return;
             }
 
-            // 渲染任务历史表格
-            elements.taskHistoryTable.innerHTML = taskHistory.map(task => {
-                // 状态样式
-                let statusClass = 'text-light';
-                let statusText = '未知';
-                if (task.status === 'running') {
-                    statusClass = 'text-warning';
-                    statusText = '<span class="flex items-center"><i class="fa fa-spinner fa-spin mr-1"></i>运行中</span>';
-                } else if (task.status === 'success' || task.status === 'success_with_failure') {
-                    statusClass = 'text-success';
-                    statusText = '已完成';
-                } else if (task.status.startsWith('failed')) {
-                    statusClass = 'text-danger';
-                    statusText = '已失败';
-                }
-
-                // 报告按钮
-                let reportBtn = '<button class="text-light cursor-not-allowed" disabled><i class="fa fa-file-text-o mr-1"></i>无报告</button>';
-                if (task.reportUrl) {
-                    reportBtn = `<a href="${task.reportUrl}" target="_blank" class="text-primary hover:text-primary/80"><i class="fa fa-file-text-o mr-1"></i>查看报告</a>`;
-                }
-
-                return `
-                    <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors task-row" data-task-id="${task.taskId}">
-                        <td class="py-3 px-4 text-sm font-medium ${task.status === 'running' ? 'task-status-running' : ''}">${task.taskId}</td>
-                        <td class="py-3 px-4 text-sm">${task.deviceId}</td>
-                        <td class="py-3 px-4 text-sm">${task.suiteName}</td>
-                        <td class="py-3 px-4 text-sm ${statusClass}">${statusText}</td>
-                        <td class="py-3 px-4 text-sm">${task.startTime}</td>
-                        <td class="py-3 px-4 text-sm">${reportBtn}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            // 更新运行中任务数
-            elements.runningTaskCount.textContent = document.querySelectorAll('.task-status-running').length;
-        }
-
-        // 保存任务历史到本地存储
-        function saveTaskHistory() {
-            // 限制历史记录数量（最多50条）
-            if (taskHistory.length > 50) {
-                taskHistory = taskHistory.slice(0, 50);
-            }
-            localStorage.setItem('taskHistory', JSON.stringify(taskHistory));
-        }
-
-        // 检查是否有运行中任务
-        function checkRunningTasks() {
-            const runningTasks = taskHistory.filter(task => task.status === 'running');
-            if (runningTasks.length > 0) {
-                // 取最新的一个运行中任务
-                const latestRunningTask = runningTasks[0];
-                currentTaskId = latestRunningTask.taskId;
-
-                // 更新UI状态
-                elements.stopTestBtn.disabled = false;
-                elements.startTestBtn.disabled = true;
-                elements.testSuiteSelect.disabled = true;
-                document.querySelectorAll('.device-item').forEach(item => {
-                    item.style.pointerEvents = 'none';
-                    item.classList.add('opacity-50');
-                });
-
-                // 启动状态刷新
-                startTaskStatusRefresh();
-
-                addTaskLog(`[信息] 发现未完成任务：${currentTaskId}，正在跟踪状态...`, 'warning');
-            }
-        }
-
-        // 绑定所有事件
-        function bindEvents() {
-            // 刷新设备列表
-            elements.refreshDeviceBtn.addEventListener('click', loadDeviceList);
-
-            // 全局刷新
-            elements.refreshBtn.addEventListener('click', async () => {
-                elements.refreshBtn.querySelector('i').classList.add('fa-spin');
-                await Promise.all([
-                    loadDeviceList(),
-                    loadTestSuites()
-                ]);
-                elements.refreshBtn.querySelector('i').classList.remove('fa-spin');
-            });
-
-            // 启动测试
-            elements.startTestBtn.addEventListener('click', startTestTask);
-
-            // 停止测试（预留功能，需后端支持）
-            elements.stopTestBtn.addEventListener('click', () => {
-                addTaskLog('[提示] 任务停止功能暂未实现，需后端接口支持', 'warning');
-                // 实际项目中需调用 /api/test/stop 接口
-            });
-
-            // 查看报告
-            elements.viewReportBtn.addEventListener('click', () => {
-                if (taskHistory.length === 0) {
-                    addTaskLog('[错误] 暂无测试报告可查看', 'danger');
-                    return;
-                }
-                const latestTask = taskHistory[0];
-                if (latestTask.reportUrl) {
-                    window.open(latestTask.reportUrl, '_blank');
-                } else {
-                    addTaskLog('[错误] 最新任务无报告可查看', 'danger');
-                }
-            });
-
-            // 清空任务历史
-            elements.clearHistoryBtn.addEventListener('click', () => {
-                if (confirm('确定要清空所有任务历史记录吗？此操作不可恢复！')) {
-                    taskHistory = [];
-                    saveTaskHistory();
-                    loadTaskHistory();
-                    addTaskLog('[信息] 任务历史记录已清空', 'info');
-                }
-            });
-
-            // 模态框：复制任务ID
-            elements.copyTaskIdBtn.addEventListener('click', () => {
-                elements.taskIdInput.select();
-                document.execCommand('copy');
-                elements.copyTaskIdBtn.innerHTML = '<i class="fa fa-check"></i> 已复制';
-                setTimeout(() => {
-                    elements.copyTaskIdBtn.innerHTML = '<i class="fa fa-copy"></i>';
-                }, 2000);
-            });
-
-            // 模态框：关闭
-            elements.closeModalBtn.addEventListener('click', () => {
-                elements.taskIdModal.classList.add('hidden');
-            });
-
-            // 模态框：查看日志
-            elements.gotoLogBtn.addEventListener('click', () => {
-                elements.taskIdModal.classList.add('hidden');
-                elements.taskLog.scrollTop = elements.taskLog.scrollHeight;
-                elements.taskLog.focus();
-            });
-
-            // 点击模态框外部关闭
-            elements.taskIdModal.addEventListener('click', (e) => {
-                if (e.target === elements.taskIdModal) {
-                    elements.taskIdModal.classList.add('hidden');
-                }
-            });
-
-            // 用例选择变化时更新启动按钮状态
-            elements.testSuiteSelect.addEventListener('change', updateStartBtnStatus);
+            elements.taskHistoryTable.innerHTML = taskHistory.map(task => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="py-3 px-4">${task.id}</td>
+                    <td class="py-3 px-4">${task.device}</td>
+                    <td class="py-3 px-4">${task.suite}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 rounded-full text-xs ${
+                            task.status === '成功' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'
+                        }">
+                            ${task.status}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">${task.time}</td>
+                    <td class="py-3 px-4">
+                        ${task.reportUrl ? `
+                            <button class="text-primary hover:text-primary/80 text-sm"
+                                    onclick="window.open('${task.reportUrl}', '_blank')">
+                                <i class="fa fa-file-text-o mr-1"></i>查看报告
+                            </button>
+                        ` : `
+                            <span class="text-light text-sm">无报告</span>
+                        `}
+                    </td>
+                </tr>
+            `).join('');
         }
     </script>
 </body>

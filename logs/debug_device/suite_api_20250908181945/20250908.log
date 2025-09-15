@@ -1,2 +1,0 @@
-2025-09-08 18:19:45,248 - suite_api - INFO - === 收到 /api/test/suites 请求 ===
-2025-09-08 18:19:45,255 - suite_api - INFO - 接口返回：{'code': 200, 'msg': '获取用例列表成功（2 个可用）', 'data': [{'id': 0, 'name': 'tmp_project.py', 'abs_path': 'D:\\PyCharmProjects\\ums_uiautomator\\test_suite\\tmp_project.py', 'rel_path': 'tmp_project.py'}, {'id': 1, 'name': 'weixin.py', 'abs_path': 'D:\\PyCharmProjects\\ums_uiautomator\\test_suite\\weixin.py', 'rel_path': 'weixin.py'}]}

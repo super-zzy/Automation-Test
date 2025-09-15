@@ -1,6 +1,7 @@
 # @Time     : 2024/5/20 15:00
 # @Author   : CN-LanBao
 # -*- coding: utf-8 -*-
+import os
 from flask import Blueprint, jsonify, send_from_directory, abort
 from app.routes.test import test_tasks
 from util.path_util import safe_join
@@ -52,5 +53,9 @@ def get_report_file(task_id: str, filename: str):
     if not file_path or not os.path.exists(file_path):
         abort(404, description=f"报告文件不存在：{filename}")
 
-    # 4. 返回文件（支持所有静态资源）
+    # 4. 处理HTML文件的MIME类型
+    if filename.endswith('.html'):
+        return send_from_directory(report_dir, filename, as_attachment=False, mimetype='text/html')
+
+    # 5. 返回其他静态文件
     return send_from_directory(report_dir, filename, as_attachment=False)
