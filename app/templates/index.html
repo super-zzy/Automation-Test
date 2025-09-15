@@ -146,12 +146,52 @@
                     </button>
                 </div>
 
+                <!-- 用例相关 -->
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <!-- 编辑用例按钮 -->
+                    <button id="edit-suite-btn" class="bg-primary text-white px-4 py-2 rounded-lg flex items-center btn-hover disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fa fa-edit mr-2"></i>编辑用例
+                    </button>
+                    <button id="new-suite-btn" class="bg-success text-white px-4 py-2 rounded-lg flex items-center btn-hover">
+                        <i class="fa fa-plus mr-2"></i>新建用例
+                    </button>
+                    <!-- 添加删除按钮 -->
+                    <button id="delete-suite-btn" class="bg-danger text-white px-4 py-2 rounded-lg flex items-center btn-hover disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fa fa-trash mr-2"></i>删除用例
+                    </button>
+                </div>
+
                 <!-- 任务状态日志 -->
                 <div>
                     <h3 class="text-sm font-medium text-light mb-2">任务状态日志</h3>
                     <div id="task-log" class="w-full h-[200px] border border-gray-200 rounded-lg p-3 overflow-y-auto bg-gray-50 text-sm">
                         <p class="text-light italic">等待测试任务启动...</p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 用例编辑模态框 -->
+        <div id="suite-editor-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg w-11/12 max-w-4xl max-h-[90vh] flex flex-col">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h3 class="text-lg font-bold" id="editor-modal-title">编辑测试用例</h3>
+                    <button id="close-editor-btn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4 flex-grow overflow-hidden flex flex-col">
+                    <div class="mb-4" id="new-suite-name-container" class="hidden">
+                        <label class="block text-sm font-medium mb-1">用例文件名 (.py)</label>
+                        <input type="text" id="new-suite-name" class="w-full px-3 py-2 border rounded" placeholder="例如：my_test.py">
+                    </div>
+                    <div class="flex-grow overflow-hidden flex flex-col">
+                        <textarea id="suite-content" class="flex-grow w-full p-3 border rounded font-mono text-sm" placeholder="请输入测试用例代码..." style="resize: none;"></textarea>
+                    </div>
+                </div>
+                <div class="p-4 border-t flex justify-end gap-2">
+                    <button id="cancel-edit-btn" class="px-4 py-2 border rounded hover:bg-gray-100">取消</button>
+                    <button id="save-suite-btn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90">保存</button>
                 </div>
             </div>
         </div>
@@ -943,6 +983,166 @@
                     </td>
                 </tr>
             `).join('');
+        }
+
+        // 元素引用
+        elements.editSuiteBtn = document.getElementById('edit-suite-btn');
+        elements.newSuiteBtn = document.getElementById('new-suite-btn');
+        elements.suiteEditorModal = document.getElementById('suite-editor-modal');
+        elements.closeEditorBtn = document.getElementById('close-editor-btn');
+        elements.cancelEditBtn = document.getElementById('cancel-edit-btn');
+        elements.saveSuiteBtn = document.getElementById('save-suite-btn');
+        elements.suiteContent = document.getElementById('suite-content');
+        elements.editorModalTitle = document.getElementById('editor-modal-title');
+        elements.newSuiteNameContainer = document.getElementById('new-suite-name-container');
+        elements.newSuiteName = document.getElementById('new-suite-name');
+
+        // 当前编辑的用例ID
+        let currentEditingSuiteId = null;
+
+        // 事件监听
+        elements.testSuiteSelect.addEventListener('change', updateEditBtnStatus);
+        elements.editSuiteBtn.addEventListener('click', openEditSuiteModal);
+        elements.newSuiteBtn.addEventListener('click', openNewSuiteModal);
+        elements.closeEditorBtn.addEventListener('click', closeEditorModal);
+        elements.cancelEditBtn.addEventListener('click', closeEditorModal);
+        elements.saveSuiteBtn.addEventListener('click', saveSuiteContent);
+
+        // 更新编辑按钮状态
+        function updateEditBtnStatus() {
+            const selectedSuiteValue = elements.testSuiteSelect.value;
+            elements.editSuiteBtn.disabled = !selectedSuiteValue;
+        }
+
+        // 打开编辑用例模态框
+        async function openEditSuiteModal() {
+            const selectedSuiteId = elements.testSuiteSelect.value;
+            if (!selectedSuiteId) return;
+
+            currentEditingSuiteId = parseInt(selectedSuiteId, 10);
+            elements.editorModalTitle.textContent = '编辑测试用例';
+            elements.newSuiteNameContainer.classList.add('hidden');
+
+            try {
+                const response = await fetch(`/api/test/suite/${currentEditingSuiteId}`);
+                const data = await response.json();
+
+                if (data.code === 200 && data.data) {
+                    elements.suiteContent.value = data.data.content;
+                    elements.suiteEditorModal.classList.remove('hidden');
+                } else {
+                    throw new Error(data.msg || '获取用例内容失败');
+                }
+            } catch (error) {
+                addTaskLog(`[错误] 打开编辑框失败：${error.message}`, 'danger');
+                console.error('打开编辑框错误:', error);
+            }
+        }
+
+        // 打开新建用例模态框
+        function openNewSuiteModal() {
+            currentEditingSuiteId = null;
+            elements.editorModalTitle.textContent = '新建测试用例';
+            elements.newSuiteNameContainer.classList.remove('hidden');
+            elements.newSuiteName.value = '';
+            elements.suiteContent.value = '# 测试用例\nimport pytest\nimport allure\n\n@allure.feature("新功能测试")\ndef test_demo(d):\n    assert True, "测试通过"';
+            elements.suiteEditorModal.classList.remove('hidden');
+        }
+
+        // 关闭模态框
+        function closeEditorModal() {
+            elements.suiteEditorModal.classList.add('hidden');
+            currentEditingSuiteId = null;
+        }
+
+        // 保存用例内容
+        async function saveSuiteContent() {
+            try {
+                const content = elements.suiteContent.value;
+
+                if (currentEditingSuiteId !== null) {
+                    // 更新现有用例
+                    const response = await fetch(`/api/test/suite/${currentEditingSuiteId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content })
+                    });
+                    const data = await response.json();
+
+                    if (data.code === 200) {
+                        addTaskLog('[成功] 用例更新成功', 'success');
+                        closeEditorModal();
+                        loadTestSuites(); // 重新加载用例列表
+                    } else {
+                        throw new Error(data.msg || '更新用例失败');
+                    }
+                } else {
+                    // 创建新用例
+                    const name = elements.newSuiteName.value.trim();
+                    if (!name || !name.endsWith('.py')) {
+                        addTaskLog('[错误] 文件名必须以.py结尾', 'danger');
+                        return;
+                    }
+
+                    const response = await fetch('/api/test/suite', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, content })
+                    });
+                    const data = await response.json();
+
+                    if (data.code === 200) {
+                        addTaskLog(`[成功] 新用例${name}创建成功`, 'success');
+                        closeEditorModal();
+                        loadTestSuites(); // 重新加载用例列表
+                    } else {
+                        throw new Error(data.msg || '创建用例失败');
+                    }
+                }
+            } catch (error) {
+                addTaskLog(`[错误] 保存用例失败：${error.message}`, 'danger');
+                console.error('保存用例错误:', error);
+            }
+        }
+
+        // 元素引用
+        elements.deleteSuiteBtn = document.getElementById('delete-suite-btn');
+
+        // 事件监听
+        elements.deleteSuiteBtn.addEventListener('click', deleteSelectedSuite);
+
+        // 更新编辑和删除按钮状态
+        function updateEditBtnStatus() {
+            const selectedSuiteValue = elements.testSuiteSelect.value;
+            elements.editSuiteBtn.disabled = !selectedSuiteValue;
+            elements.deleteSuiteBtn.disabled = !selectedSuiteValue;
+        }
+
+        // 删除选中的用例
+        async function deleteSelectedSuite() {
+            const selectedSuiteId = elements.testSuiteSelect.value;
+            const selectedSuiteName = elements.testSuiteSelect.options[elements.testSuiteSelect.selectedIndex].text;
+
+            if (!selectedSuiteId || !confirm(`确定要删除测试用例"${selectedSuiteName}"吗？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/test/suite/${selectedSuiteId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+
+                if (data.code === 200) {
+                    addTaskLog('[成功] 用例删除成功', 'success');
+                    loadTestSuites(); // 重新加载用例列表
+                } else {
+                    throw new Error(data.msg || '删除用例失败');
+                }
+            } catch (error) {
+                addTaskLog(`[错误] 删除用例失败：${error.message}`, 'danger');
+                console.error('删除用例错误:', error);
+            }
         }
     </script>
 </body>

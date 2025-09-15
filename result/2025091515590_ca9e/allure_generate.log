@@ -1,0 +1,12 @@
+=== 任务2025091515590_ca9e Allure报告生成日志 ===
+生成时间：2025-09-15 15:59:29
+生成耗时：4.29秒
+执行命令：allure generate D:\PycharmProjects\ums_uiautomator\result\2025091515590_ca9e\allure_raw -o D:\PycharmProjects\ums_uiautomator\result\2025091515590_ca9e\allure_html --clean --title report_2025091515590_ca9e
+
+=== 标准输出（stdout）===
+--title does not exist
+report_2025091515590_ca9e does not exist
+Report successfully generated to D:\PycharmProjects\ums_uiautomator\result\2025091515590_ca9e\allure_html
+
+=== 错误输出（stderr）===
+无错误输出

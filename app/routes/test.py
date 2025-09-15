@@ -248,3 +248,114 @@ def stop_test_task(task_id: str):
             "msg": error_msg,
             "data": None
         })
+
+
+@test_bp.get("/suite/<int:suite_id>")
+def get_test_suite(suite_id):
+    """获取单个测试用例内容"""
+    try:
+        suites = get_test_suites()
+        if suite_id < 0 or suite_id >= len(suites):
+            return jsonify({"code": 404, "msg": f"用例不存在", "data": None})
+
+        suite_info = suites[suite_id]
+        with open(suite_info["abs_path"], "r", encoding="utf-8") as f:
+            content = f.read()
+
+        return jsonify({
+            "code": 200,
+            "msg": "获取用例内容成功",
+            "data": {
+                "id": suite_id,
+                "name": suite_info["name"],
+                "content": content,
+                "abs_path": suite_info["abs_path"],
+                "rel_path": suite_info["rel_path"]
+            }
+        })
+    except Exception as e:
+        error_msg = f"获取用例内容失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({"code": 400, "msg": error_msg, "data": None})
+
+
+@test_bp.post("/suite")
+def create_test_suite():
+    """创建新测试用例"""
+    try:
+        req_data = request.get_json() or {}
+        name = req_data.get("name")
+        content = req_data.get("content", "")
+
+        if not name or not name.endswith(".py"):
+            return jsonify({"code": 400, "msg": "用例名称必须以.py结尾", "data": None})
+
+        test_suite_dir = current_app.config["TEST_SUITE_DIR"]
+        file_path = safe_join(test_suite_dir, name)
+
+        if os.path.exists(file_path):
+            return jsonify({"code": 400, "msg": "用例已存在", "data": None})
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        return jsonify({
+            "code": 200,
+            "msg": "用例创建成功",
+            "data": {"name": name}
+        })
+    except Exception as e:
+        error_msg = f"创建用例失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({"code": 400, "msg": error_msg, "data": None})
+
+
+@test_bp.put("/suite/<int:suite_id>")
+def update_test_suite(suite_id):
+    """更新测试用例内容"""
+    try:
+        req_data = request.get_json() or {}
+        content = req_data.get("content")
+
+        if content is None:
+            return jsonify({"code": 400, "msg": "请提供用例内容", "data": None})
+
+        suites = get_test_suites()
+        if suite_id < 0 or suite_id >= len(suites):
+            return jsonify({"code": 404, "msg": f"用例不存在", "data": None})
+
+        suite_info = suites[suite_id]
+        with open(suite_info["abs_path"], "w", encoding="utf-8") as f:
+            f.write(content)
+
+        return jsonify({
+            "code": 200,
+            "msg": "用例更新成功",
+            "data": None
+        })
+    except Exception as e:
+        error_msg = f"更新用例失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({"code": 400, "msg": error_msg, "data": None})
+
+
+@test_bp.delete("/suite/<int:suite_id>")
+def delete_test_suite(suite_id):
+    """删除测试用例"""
+    try:
+        suites = get_test_suites()
+        if suite_id < 0 or suite_id >= len(suites):
+            return jsonify({"code": 404, "msg": f"用例不存在", "data": None})
+
+        suite_info = suites[suite_id]
+        os.remove(suite_info["abs_path"])
+
+        return jsonify({
+            "code": 200,
+            "msg": "用例删除成功",
+            "data": None
+        })
+    except Exception as e:
+        error_msg = f"删除用例失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({"code": 400, "msg": error_msg, "data": None})

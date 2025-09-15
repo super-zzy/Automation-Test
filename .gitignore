@@ -93,3 +93,4 @@ static/reports/         # 报告文件目录（若动态生成）
 .idea/dictionaries/     # IDEA 字典配置
 .vscode/settings.json   # VS Code 个人设置
 .vscode/extensions.json # VS Code 扩展配置（若不共享）
+/result/
