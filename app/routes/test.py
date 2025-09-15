@@ -359,3 +359,107 @@ def delete_test_suite(suite_id):
         error_msg = f"删除用例失败：{str(e)}"
         log.error(error_msg)
         return jsonify({"code": 400, "msg": error_msg, "data": None})
+
+
+@test_bp.get("/suites/<int:suite_id>/content")
+def get_suite_content(suite_id):
+    """获取测试用例内容"""
+    try:
+        suites = get_test_suites()
+        if suite_id < 0 or suite_id >= len(suites):
+            return jsonify({"code": 404, "msg": f"用例ID{suite_id}不存在", "data": None})
+
+        suite_info = suites[suite_id]
+        with open(suite_info["abs_path"], "r", encoding="utf-8") as f:
+            content = f.read()
+
+        return jsonify({
+            "code": 200,
+            "msg": "获取用例内容成功",
+            "data": {
+                "content": content,
+                "path": suite_info["rel_path"]
+            }
+        })
+    except Exception as e:
+        error_msg = f"获取用例内容失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({
+            "code": 400,
+            "msg": error_msg,
+            "data": None
+        })
+
+
+@test_bp.put("/suites/<int:suite_id>")
+def update_suite(suite_id):
+    """更新测试用例"""
+    try:
+        req_data = request.get_json() or {}
+        new_name = req_data.get("name")
+        new_content = req_data.get("content")
+
+        if not new_name or new_content is None:
+            return jsonify({"code": 400, "msg": "名称和内容不能为空", "data": None})
+
+        suites = get_test_suites()
+        if suite_id < 0 or suite_id >= len(suites):
+            return jsonify({"code": 404, "msg": f"用例ID{suite_id}不存在", "data": None})
+
+        suite_info = suites[suite_id]
+        file_path = suite_info["abs_path"]
+
+        # 确保文件名有效
+        new_file_name = f"{new_name.replace(' ', '_')}.py"
+        new_file_path = os.path.join(os.path.dirname(file_path), new_file_name)
+
+        # 保存文件内容
+        with open(new_file_path, "w", encoding="utf-8") as f:
+            f.write(new_content)
+
+        # 如果文件名改变，删除旧文件
+        if new_file_path != file_path:
+            os.remove(file_path)
+
+        log.info(f"用例{suite_id}更新成功，路径：{new_file_path}")
+        return jsonify({
+            "code": 200,
+            "msg": "用例更新成功",
+            "data": None
+        })
+    except Exception as e:
+        error_msg = f"更新用例失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({
+            "code": 400,
+            "msg": error_msg,
+            "data": None
+        })
+
+
+@test_bp.post("/format-code")
+def format_code():
+    """代码格式化接口"""
+    try:
+        req_data = request.get_json() or {}
+        code = req_data.get("code", "")
+
+        # 使用black进行代码格式化
+        import black
+        from black import Mode
+
+        formatted_code = black.format_str(code, mode=Mode())
+
+        return jsonify({
+            "code": 200,
+            "msg": "代码格式化成功",
+            "data": {"formatted_code": formatted_code}
+        })
+    except Exception as e:
+        error_msg = f"代码格式化失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({
+            "code": 400,
+            "msg": error_msg,
+            "data": None
+        })

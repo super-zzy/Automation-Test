@@ -171,27 +171,38 @@
             </div>
         </div>
 
-        <!-- 用例编辑模态框 -->
-        <div id="suite-editor-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-lg w-11/12 max-w-4xl max-h-[90vh] flex flex-col">
+        <!-- 编辑用例模态框 -->
+        <div id="edit-suite-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
                 <div class="p-4 border-b flex justify-between items-center">
-                    <h3 class="text-lg font-bold" id="editor-modal-title">编辑测试用例</h3>
-                    <button id="close-editor-btn" class="text-gray-500 hover:text-gray-700">
+                    <h3 class="text-lg font-semibold">编辑测试用例</h3>
+                    <button id="close-edit-modal" class="text-gray-500 hover:text-gray-700">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
-                <div class="p-4 flex-grow overflow-hidden flex flex-col">
-                    <div class="mb-4" id="new-suite-name-container" class="hidden">
-                        <label class="block text-sm font-medium mb-1">用例文件名 (.py)</label>
-                        <input type="text" id="new-suite-name" class="w-full px-3 py-2 border rounded" placeholder="例如：my_test.py">
+                <div class="p-4 flex-grow overflow-auto">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">用例名称</label>
+                        <input type="text" id="suite-name-input" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="输入用例名称">
                     </div>
-                    <div class="flex-grow overflow-hidden flex flex-col">
-                        <textarea id="suite-content" class="flex-grow w-full p-3 border rounded font-mono text-sm" placeholder="请输入测试用例代码..." style="resize: none;"></textarea>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">用例代码</label>
+                        <div class="border border-gray-300 rounded-md overflow-hidden">
+                            <div class="bg-gray-50 px-3 py-2 border-b flex items-center text-xs text-gray-500">
+                                <span>.py</span>
+                                <div class="ml-auto flex gap-2">
+                                    <button class="hover:text-primary" id="format-code"><i class="fa fa-indent mr-1"></i>格式化</button>
+                                    <button class="hover:text-primary" id="reset-code"><i class="fa fa-refresh mr-1"></i>重置</button>
+                                </div>
+                            </div>
+                            <textarea id="suite-code-editor" class="w-full h-64 p-3 font-mono text-sm resize-none focus:outline-none" placeholder="输入Python测试代码"></textarea>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">提示：使用pytest语法编写，支持allure注解</p>
                     </div>
                 </div>
-                <div class="p-4 border-t flex justify-end gap-2">
-                    <button id="cancel-edit-btn" class="px-4 py-2 border rounded hover:bg-gray-100">取消</button>
-                    <button id="save-suite-btn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90">保存</button>
+                <div class="p-4 border-t flex justify-end gap-3">
+                    <button id="cancel-edit-btn" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">取消</button>
+                    <button id="save-suite-btn" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90">保存用例</button>
                 </div>
             </div>
         </div>
@@ -235,7 +246,7 @@
     <!-- 页脚 -->
     <footer class="bg-white border-t border-gray-200 py-4 mt-6">
         <div class="container mx-auto px-4 text-center text-light text-sm">
-            <p>© 2024 Android UI 自动化测试平台 | 设计与开发：zyli3</p>
+            <p>© 2025 Android UI 自动化测试平台 | 设计与开发：zyli3</p>
         </div>
     </footer>
 
@@ -273,6 +284,168 @@
             refreshBtn: document.getElementById('refresh-btn')
         };
 
+        // 初始化编辑功能
+        function initSuiteEditor() {
+            const elements = {
+                testSuiteSelect: document.getElementById('test-suite-select'),
+                editSuiteBtn: document.getElementById('edit-suite-btn'),
+                editSuiteModal: document.getElementById('edit-suite-modal'),
+                closeEditModal: document.getElementById('close-edit-modal'),
+                cancelEditBtn: document.getElementById('cancel-edit-btn'),
+                suiteNameInput: document.getElementById('suite-name-input'),
+                suiteCodeEditor: document.getElementById('suite-code-editor'),
+                saveSuiteBtn: document.getElementById('save-suite-btn'),
+                formatCodeBtn: document.getElementById('format-code'),
+                resetCodeBtn: document.getElementById('reset-code')
+            };
+
+            // 保存原始代码用于重置
+            let originalCode = '';
+
+            // 当选择用例变化时更新编辑按钮状态
+            elements.testSuiteSelect.addEventListener('change', () => {
+                elements.editSuiteBtn.disabled = !elements.testSuiteSelect.value;
+            });
+
+            // 打开编辑模态框
+            elements.editSuiteBtn.addEventListener('click', async () => {
+                const selectedOption = elements.testSuiteSelect.options[elements.testSuiteSelect.selectedIndex];
+                const suiteId = selectedOption.value;
+                // 提取文件名并移除后缀
+                let suiteName = selectedOption.textContent.split(' (')[0];
+                // 移除文件扩展名（如.py）
+                suiteName = suiteName.replace(/\.[^/.]+$/, "");
+
+                try {
+                    // 从服务器加载用例内容
+                    const response = await fetch(`/api/test/suites/${suiteId}/content`);
+                    const data = await response.json();
+
+                    if (data.code === 200) {
+                        elements.suiteNameInput.value = suiteName;  // 这里现在显示的是没有后缀的文件名
+                        elements.suiteCodeEditor.value = data.data.content;
+                        originalCode = data.data.content;
+                        elements.editSuiteModal.classList.remove('hidden');
+                    } else {
+                        throw new Error(data.msg || '加载用例内容失败');
+                    }
+                } catch (error) {
+                    addTaskLog(`[错误] 无法加载用例内容：${error.message}`, 'danger');
+                }
+            });
+
+            // 保存用例时确保文件名包含正确后缀
+            elements.saveSuiteBtn.addEventListener('click', async () => {
+                const suiteId = elements.testSuiteSelect.value;
+                let newName = elements.suiteNameInput.value.trim();  // 这是没有后缀的名称
+
+                if (!newName) {
+                    addTaskLog('[错误] 用例名称不能为空', 'danger');
+                    return;
+                }
+
+                // 确保保存时文件名包含.py后缀
+                if (!newName.endsWith('.py')) {
+                    newName += '.py';
+                }
+
+                const newCode = elements.suiteCodeEditor.value;
+
+                try {
+                    const response = await fetch(`/api/test/suites/${suiteId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: newName,  // 保存时添加后缀
+                            content: newCode
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.code === 200) {
+                        addTaskLog('[信息] 用例保存成功', 'success');
+                        // 重新加载用例列表并保持当前选择
+                        const currentId = elements.testSuiteSelect.value;
+                        await loadTestSuites();
+                        elements.testSuiteSelect.value = currentId;
+                        closeModal();
+                    } else {
+                        throw new Error(data.msg || '保存用例失败');
+                    }
+                } catch (error) {
+                    addTaskLog(`[错误] 保存用例失败：${error.message}`, 'danger');
+                }
+            });
+
+            // 关闭模态框
+            const closeModal = () => {
+                elements.editSuiteModal.classList.add('hidden');
+            };
+            elements.closeEditModal.addEventListener('click', closeModal);
+            elements.cancelEditBtn.addEventListener('click', closeModal);
+
+            // 重置代码
+            elements.resetCodeBtn.addEventListener('click', () => {
+                elements.suiteCodeEditor.value = originalCode;
+            });
+
+            // 格式化代码（需要后端支持或引入前端格式化库）
+            elements.formatCodeBtn.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/api/test/format-code', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code: elements.suiteCodeEditor.value })
+                    });
+                    const data = await response.json();
+                    if (data.code === 200) {
+                        elements.suiteCodeEditor.value = data.data.formatted_code;
+                    } else {
+                        throw new Error(data.msg || '代码格式化失败');
+                    }
+                } catch (error) {
+                    addTaskLog(`[错误] 代码格式化失败：${error.message}`, 'danger');
+                }
+            });
+
+            // 保存用例
+            elements.saveSuiteBtn.addEventListener('click', async () => {
+                const suiteId = elements.testSuiteSelect.value;
+                const newName = elements.suiteNameInput.value.trim();
+                const newCode = elements.suiteCodeEditor.value;
+
+                if (!newName) {
+                    addTaskLog('[错误] 用例名称不能为空', 'danger');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/test/suites/${suiteId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: newName,
+                            content: newCode
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.code === 200) {
+                        addTaskLog('[信息] 用例保存成功', 'success');
+                        // 重新加载用例列表并保持当前选择
+                        const currentId = elements.testSuiteSelect.value;
+                        await loadTestSuites();
+                        elements.testSuiteSelect.value = currentId;
+                        closeModal();
+                    } else {
+                        throw new Error(data.msg || '保存用例失败');
+                    }
+                } catch (error) {
+                    addTaskLog(`[错误] 保存用例失败：${error.message}`, 'danger');
+                }
+            });
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', async () => {
             // 初始化时间显示
@@ -290,6 +463,9 @@
 
             // 绑定事件监听
             bindEventListeners();
+
+            //初始化用例编辑
+            initSuiteEditor();
         });
 
         // 事件绑定
