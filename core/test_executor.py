@@ -35,7 +35,7 @@ class TestExecutor:
         self.allure_config = {
             "clean_before_generate": GlobalConfig["test"]["allure_clean"],
             "generate_timeout": GlobalConfig["test"].get("allure_generate_timeout", 300),
-            "report_compress": GlobalConfig["test"].get("report_compress", True),
+            "report_compress": GlobalConfig["test"].get("report_compress", False),
             "compress_format": GlobalConfig["test"].get("report_compress_format", "zip"),
             "keep_raw_data": GlobalConfig["test"].get("keep_allure_raw", True)
         }

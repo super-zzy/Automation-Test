@@ -13,7 +13,7 @@ test:
   pytest_timeout: 3600
   allure_clean: true
   allure_generate_timeout: 600  # Allure生成超时（10分钟）
-  report_compress: true         # 启用报告压缩
+  report_compress: false         # 启用报告压缩
   report_compress_format: zip   # 压缩格式（zip/tar）
   keep_allure_raw: false        # 压缩后删除原始HTML目录
 web:
