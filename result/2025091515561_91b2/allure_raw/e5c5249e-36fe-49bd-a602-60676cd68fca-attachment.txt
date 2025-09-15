@@ -1,0 +1,27 @@
+[2025-09-15 15:56:21] [INFO] 开始初始化设备：AF8YVB1805003480
+[2025-09-15 15:56:22] [DEBUG] 设备AF8YVB1805003480在线状态：True
+[2025-09-15 15:56:22] [INFO] 执行初始化命令：python -m uiautomator2 init AF8YVB1805003480
+[2025-09-15 15:56:23] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,621 core:254 pid:41356] file u2.jar md5: 3564c56e4ef077f92c0fd32bcb42aea1
+[2025-09-15 15:56:23] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,693 core:243 pid:41356] file u2.jar already pushed
+[2025-09-15 15:56:23] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,693 core:111 pid:41356] http request GET /ping None
+[2025-09-15 15:56:23] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,727 core:71 pid:41356] launch uiautomator with cmd: CLASSPATH=/data/local/tmp/u2.jar app_process / com.wetest.uia2.Main
+[2025-09-15 15:56:23] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,749 core:111 pid:41356] http request GET /ping None
+[2025-09-15 15:56:24] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,281 core:111 pid:41356] http request GET /ping None
+[2025-09-15 15:56:24] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,378 core:39 pid:41356] MockAdbProcess: b'[server] INFO: [UiAutomator2Server] Starting Server\n'
+[2025-09-15 15:56:24] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,561 core:39 pid:41356] MockAdbProcess: b'SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.\n'
+[2025-09-15 15:56:24] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,642 core:39 pid:41356] MockAdbProcess: b'[server] INFO: clipboardManager inited\n'
+[2025-09-15 15:56:24] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,644 core:39 pid:41356] MockAdbProcess: b'[server] INFO: tmpdir is /data/local/tmp/u2\n[server] INFO: http server listening on *:9008\n'
+[2025-09-15 15:56:24] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,815 core:111 pid:41356] http request GET /ping None
+[2025-09-15 15:56:24] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,864 core:254 pid:41356] file u2.jar md5: 3564c56e4ef077f92c0fd32bcb42aea1
+[2025-09-15 15:56:24] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,936 core:243 pid:41356] file u2.jar already pushed
+[2025-09-15 15:56:25] [INFO] uiautomator2 init 命令执行完成
+[2025-09-15 15:56:27] [DEBUG] 执行 atx-agent 版本校验命令：adb -s AF8YVB1805003480 shell /data/local/tmp/atx-agent version
+[2025-09-15 15:56:27] [INFO] 设备AF8YVB1805003480初始化成功
+[2025-09-15 15:56:27] [INFO] 设备AF8YVB1805003480执行亮屏操作
+[2025-09-15 15:56:29] [ERROR] 设备AF8YVB1805003480检查文本'相机'失败：[Errno 2] No such file or directory: '/tmp/window_dump.xml'
+Traceback (most recent call last):
+  File "D:\PycharmProjects\ums_uiautomator\core\uiautomator.py", line 156, in check_text_exists
+    with open("/tmp/window_dump.xml", "r", encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/window_dump.xml'
+[2025-09-15 15:56:30] [INFO] 设备AF8YVB1805003480执行按键操作：home

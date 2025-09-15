@@ -1,2 +1,95 @@
-/result/
-/logs/
+# ==============================
+# 通用忽略规则
+# ==============================
+# 操作系统生成的文件
+.DS_Store               # Mac
+Thumbs.db               # Windows
+desktop.ini             # Windows
+*.swp                   # Vim 临时文件
+*.swo                   # Vim 临时文件
+*~                      # 临时文件（如 Emacs 生成）
+
+# 编辑器配置文件（如需共享可删除对应行）
+.idea/                  # IntelliJ IDEA
+.vscode/                # VS Code
+*.suo                   # Visual Studio
+*.ntvs*                 # Visual Studio
+*.njsproj               # Visual Studio
+*.sln                   # Visual Studio
+*.swp                   # Vim
+
+
+# ==============================
+# Python 后端忽略规则
+# ==============================
+# 依赖包目录
+venv/                   # 虚拟环境（若使用 venv）
+env/                    # 虚拟环境（若使用 virtualenv）
+ENV/                    # 虚拟环境（大写）
+*.egg-info/             # 包信息
+dist/                   # 打包输出
+build/                  # 编译输出
+__pycache__/            # Python 字节码缓存
+*.pyc                   # Python 编译文件
+*.pyo                   # Python 优化编译文件
+*.pyd                   # Python 动态链接库
+
+# 日志文件
+logs/                   # 日志目录
+*.log                   # 所有日志文件
+log/                    # 日志目录（备用）
+
+# 环境配置文件（敏感信息，不提交）
+.env                    # 环境变量配置（如数据库密码、密钥）
+.env.*                  # 多环境配置（如 .env.dev, .env.prod）
+!/.env.example          # 保留示例配置（若项目有）
+
+# 测试相关
+.coverage               # 测试覆盖率报告
+htmlcov/                # 测试覆盖率 HTML 报告
+.pytest_cache/          # pytest 缓存
+test-results/           # 测试结果目录
+
+
+# ==============================
+# 前端忽略规则
+# ==============================
+# 前端依赖（若使用 npm/yarn）
+node_modules/           # npm 依赖
+yarn.lock               # yarn 锁文件（若不共享）
+package-lock.json       # npm 锁文件（若不共享）
+
+# 前端构建输出（若使用 webpack/vite 等）
+dist/                   # 构建输出目录（前端）
+build/                  # 构建输出目录（备用）
+out/                    # 构建输出目录（备用）
+
+# 前端缓存/临时文件
+.cache/                 # 缓存目录
+.tmp/                   # 临时目录
+*.map                   # Source Map（若不提交）
+
+# 静态资源中的临时文件（如上传的测试报告、截图）
+static/uploads/         # 上传文件目录
+static/reports/         # 报告文件目录（若动态生成）
+
+
+# ==============================
+# 其他忽略规则
+# ==============================
+# 数据库文件（若使用 SQLite 本地数据库）
+*.db                    # SQLite 数据库文件
+*.sqlite                # SQLite 数据库文件
+*.sqlite3               # SQLite 数据库文件
+
+# 压缩文件
+*.zip                   # ZIP 压缩包
+*.tar.gz                # TAR 压缩包
+*.rar                   # RAR 压缩包
+
+# 个人IDE配置（如需共享可删除）
+.idea/workspace.xml     # IDEA 工作区配置
+.idea/usage.statistics.xml # IDEA 使用统计
+.idea/dictionaries/     # IDEA 字典配置
+.vscode/settings.json   # VS Code 个人设置
+.vscode/extensions.json # VS Code 扩展配置（若不共享）

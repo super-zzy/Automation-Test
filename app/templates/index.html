@@ -274,8 +274,61 @@
             elements.startTestBtn.addEventListener('click', startTestTask);
 
             // 停止测试
-            elements.stopTestBtn.addEventListener('click', () => {
-                addTaskLog('[提示] 任务停止功能暂未实现，需后端接口支持', 'warning');
+            // 更新stopTestBtn的事件绑定
+            elements.stopTestBtn.addEventListener('click', async () => {
+                if (!currentTaskId) {
+                    addTaskLog('[错误] 没有正在运行的任务', 'danger');
+                    return;
+                }
+
+                if (confirm(`确定要停止任务 ${currentTaskId} 吗？`)) {
+                    try {
+                        addTaskLog(`[信息] 正在停止任务 ${currentTaskId}...`, 'info');
+                        elements.stopTestBtn.disabled = true;
+
+                        const response = await fetch(`/api/test/stop/${currentTaskId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (data.code === 200) {
+                            addTaskLog(`[成功] 任务 ${currentTaskId} 已停止`, 'success');
+
+                            // 更新任务历史状态
+                            const taskIndex = taskHistory.findIndex(task => task.taskId === currentTaskId);
+                            if (taskIndex !== -1) {
+                                taskHistory[taskIndex].status = 'stopped';
+                                taskHistory[taskIndex].endTime = new Date().toLocaleString('zh-CN');
+                                saveTaskHistory();
+                                loadTaskHistory();
+                            }
+
+                            // 恢复UI状态
+                            currentTaskId = null;
+                            clearInterval(refreshInterval);
+                            elements.stopTestBtn.disabled = true;
+                            elements.startTestBtn.disabled = false;
+                            elements.testSuiteSelect.disabled = false;
+                            document.querySelectorAll('.device-item').forEach(item => {
+                                item.style.pointerEvents = 'auto';
+                                item.classList.remove('opacity-50');
+                            });
+                            updateStartBtnStatus();
+                            elements.runningTaskCount.textContent = document.querySelectorAll('.task-status-running').length;
+                        } else {
+                            addTaskLog(`[错误] 停止任务失败：${data.msg}`, 'danger');
+                            elements.stopTestBtn.disabled = false;
+                        }
+                    } catch (error) {
+                        addTaskLog(`[错误] 停止任务时发生错误：${error.message}`, 'danger');
+                        elements.stopTestBtn.disabled = false;
+                        console.error('停止任务错误:', error);
+                    }
+                }
             });
 
             // 查看报告
@@ -303,6 +356,198 @@
                 }
             });
         }
+
+                /**
+         * 1. 保存任务历史到 localStorage
+         * @param {Array} taskHistory - 任务历史数组（格式见下方说明）
+         * 任务对象结构：
+         * {
+         *   taskId: string,        // 任务唯一ID（如 UUID 或时间戳）
+         *   testSuite: string,     // 测试套件名称
+         *   deviceId: string,      // 设备ID
+         *   deviceName: string,    // 设备名称
+         *   status: string,        // 任务状态（running/stopped/completed/failed）
+         *   startTime: string,     // 开始时间（格式：YYYY-MM-DD HH:MM:SS）
+         *   endTime: string|null,  // 结束时间（未结束为 null）
+         *   stopReason: string|null // 停止原因（如用户手动停止/执行失败，未停止为 null）
+         * }
+         */
+        function saveTaskHistory(taskHistory) {
+          try {
+            // 校验参数：确保是数组，避免存储无效数据
+            if (!Array.isArray(taskHistory)) {
+              console.error("saveTaskHistory: 任务历史必须是数组");
+              return false;
+            }
+
+            // 将数组转为 JSON 字符串（localStorage 仅支持字符串存储）
+            const taskHistoryStr = JSON.stringify(taskHistory);
+
+            // 存储到 localStorage，键名为 "automation_test_task_history"（避免与其他项目冲突）
+            localStorage.setItem("automation_test_task_history", taskHistoryStr);
+
+            console.log(`saveTaskHistory: 成功保存 ${taskHistory.length} 条任务历史`);
+            return true;
+          } catch (error) {
+            console.error("saveTaskHistory: 存储失败", error);
+            addTaskLog(`[错误] 任务历史保存失败：${error.message}`, "danger"); // 复用项目已有的日志方法
+            return false;
+          }
+        }
+
+        /**
+         * 2. 从 localStorage 加载任务历史
+         * @returns {Array} 任务历史数组（若无数据则返回空数组，格式同上）
+         */
+        function loadTaskHistory() {
+          try {
+            // 从 localStorage 读取数据
+            const taskHistoryStr = localStorage.getItem("automation_test_task_history");
+
+            // 若无数据，返回空数组（避免后续逻辑报错）
+            if (!taskHistoryStr) {
+              console.log("loadTaskHistory: 未找到任务历史数据，返回空数组");
+              return [];
+            }
+
+            // 将 JSON 字符串解析为数组
+            const taskHistory = JSON.parse(taskHistoryStr);
+
+            // 校验解析结果：确保是数组，避免无效数据影响页面
+            if (!Array.isArray(taskHistory)) {
+              console.error("loadTaskHistory: 存储的任务历史格式错误，重置为空数组");
+              saveTaskHistory([]); // 重置错误数据
+              return [];
+            }
+
+            console.log(`loadTaskHistory: 成功加载 ${taskHistory.length} 条任务历史`);
+
+            // （可选）加载后更新页面表格显示（需配合项目已有 DOM 结构）
+            renderTaskHistoryTable(taskHistory);
+
+            return taskHistory;
+          } catch (error) {
+            console.error("loadTaskHistory: 加载失败", error);
+            addTaskLog(`[错误] 任务历史加载失败：${error.message}`, "danger");
+            return [];
+          }
+        }
+
+        /**
+         * （辅助方法）渲染任务历史表格（需配合项目已有 DOM 结构）
+         * @param {Array} taskHistory - 任务历史数组
+         */
+        function renderTaskHistoryTable(taskHistory) {
+          const taskHistoryTable = document.getElementById("taskHistoryTable"); // 假设表格 ID 为 taskHistoryTable
+          if (!taskHistoryTable) {
+            console.error("renderTaskHistoryTable: 未找到任务历史表格 DOM 元素");
+            return;
+          }
+
+          // 若无任务历史，显示空提示
+          if (taskHistory.length === 0) {
+            taskHistoryTable.innerHTML = `
+              <tr>
+                <td colspan="8" class="text-center text-muted">暂无任务历史</td>
+              </tr>
+            `;
+            return;
+          }
+
+          // 渲染任务列表（按开始时间倒序，最新任务在最前）
+          const taskRows = taskHistory
+            .sort((a, b) => new Date(b.startTime) - new Date(a.startTime)) // 时间倒序
+            .map((task) => `
+              <tr>
+                <td>${task.taskId}</td>
+                <td>${task.testSuite || "未指定"}</td>
+                <td>${task.deviceName || task.deviceId}</td>
+                <td>
+                  <span class="badge ${
+                    task.status === "running" ? "bg-warning" :
+                    task.status === "completed" ? "bg-success" :
+                    task.status === "stopped" ? "bg-info" : "bg-danger"
+                  }">
+                    ${task.status === "running" ? "运行中" :
+                      task.status === "completed" ? "已完成" :
+                      task.status === "stopped" ? "已停止" : "已失败"}
+                  </span>
+                </td>
+                <td>${task.startTime}</td>
+                <td>${task.endTime || "未结束"}</td>
+                <td>${task.stopReason || "-"}</td>
+                <td>
+                  <!-- 查看报告按钮 -->
+                  <button class="text-primary hover:text-primary/80 view-report-btn" data-task-id="${task.taskId}">
+                    <i class="fa fa-file-text-o mr-1"></i>报告
+                  </button>
+                  <!-- 仅对运行中任务显示停止按钮 -->
+                  ${task.status === "running"
+                    ? `<button class="text-danger hover:text-danger/80 ml-2 stop-task-btn" data-task-id="${task.taskId}">
+                        <i class="fa fa-stop mr-1"></i>停止
+                      </button>`
+                    : ""}
+                </td>
+              </tr>
+            `)
+            .join("");
+
+          // 插入表格内容（假设表格已有表头 <thead>）
+          taskHistoryTable.innerHTML = taskRows;
+
+          // 绑定按钮事件（停止任务、查看报告）
+          bindTaskHistoryEvents();
+        }
+
+        /**
+         * （辅助方法）绑定任务历史表格的按钮事件
+         */
+        function bindTaskHistoryEvents() {
+          // 停止任务按钮事件（复用已有的停止任务逻辑）
+          document.querySelectorAll(".stop-task-btn").forEach((btn) => {
+            btn.addEventListener("click", async (e) => {
+              const taskId = e.currentTarget.dataset.taskId;
+              if (!confirm(`确定要停止任务 ${taskId} 吗？`)) return;
+
+              try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>停止中...';
+
+                // 调用后端停止任务接口
+                const response = await fetch(`/api/test/stop/${taskId}`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                });
+                const data = await response.json();
+
+                if (data.code === 200) {
+                  addTaskLog(`[成功] 任务 ${taskId} 已停止`, "success");
+                  // 重新加载任务历史，更新表格状态
+                  const updatedHistory = loadTaskHistory();
+                  // 更新全局任务历史变量（假设项目有全局 taskHistory 变量）
+                  window.taskHistory = updatedHistory;
+                } else {
+                  addTaskLog(`[错误] 停止任务失败：${data.msg}`, "danger");
+                }
+              } catch (error) {
+                addTaskLog(`[错误] 停止任务出错：${error.message}`, "danger");
+              } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-stop mr-1"></i>停止';
+              }
+            });
+          });
+
+  // 查看报告按钮事件（根据项目实际报告逻辑扩展）
+  document.querySelectorAll(".view-report-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const taskId = e.currentTarget.dataset.taskId;
+      addTaskLog(`[信息] 查看任务 ${taskId} 报告`, "info");
+      // 此处可扩展：打开报告弹窗/新页面，加载任务报告数据
+      // window.open(`/api/test/report/${taskId}`, "_blank");
+    });
+  });
+}
 
         // 更新当前时间
         function updateCurrentTime() {
@@ -435,6 +680,73 @@
                 console.error('加载测试用例失败:', error);
             }
         }
+
+        // 添加获取所有运行中任务的函数
+        async function loadRunningTasks() {
+            try {
+                const response = await fetch('/api/test/running');
+                const data = await response.json();
+
+                if (data.code === 200) {
+                    // 更新运行中任务数量显示
+                    elements.runningTaskCount.textContent = data.data.length;
+
+                    // 如果当前没有跟踪的任务，但有运行中任务，自动跟踪最新的
+                    if (!currentTaskId && data.data.length > 0) {
+                        // 按开始时间排序，取最新的任务
+                        const sortedTasks = [...data.data].sort((a, b) =>
+                            new Date(b.start_time) - new Date(a.start_time)
+                        );
+                        currentTaskId = sortedTasks[0].task_id;
+                        startTaskStatusRefresh();
+                        addTaskLog(`[信息] 自动跟踪最新运行中任务：${currentTaskId}`, 'info');
+                    }
+                }
+            } catch (error) {
+                console.error('加载运行中任务失败:', error);
+            }
+        }
+
+        // 修改checkRunningTasks函数
+        function checkRunningTasks() {
+            // 先从本地历史检查
+            const runningTasks = taskHistory.filter(task => task.status === 'running');
+            if (runningTasks.length > 0) {
+                const latestRunningTask = runningTasks[0];
+                currentTaskId = latestRunningTask.taskId;
+                updateUIForRunningTask();
+                startTaskStatusRefresh();
+                addTaskLog(`[信息] 发现未完成任务：${currentTaskId}，正在跟踪状态...`, 'warning');
+            } else {
+                // 本地没有则从服务器检查
+                loadRunningTasks();
+            }
+        }
+
+        // 添加UI更新辅助函数
+        function updateUIForRunningTask() {
+            elements.stopTestBtn.disabled = false;
+            elements.startTestBtn.disabled = true;
+            elements.testSuiteSelect.disabled = true;
+            document.querySelectorAll('.device-item').forEach(item => {
+                item.style.pointerEvents = 'none';
+                item.classList.add('opacity-50');
+            });
+        }
+
+        // 在全局刷新中添加运行中任务刷新
+        elements.refreshBtn.addEventListener('click', async () => {
+            elements.refreshBtn.querySelector('i').classList.add('fa-spin');
+            await Promise.all([
+                loadDeviceList(),
+                loadTestSuites(),
+                loadRunningTasks()  // 添加这一行
+            ]);
+            elements.refreshBtn.querySelector('i').classList.remove('fa-spin');
+        });
+
+        // 定期刷新运行中任务数量
+        setInterval(loadRunningTasks, 10000); // 每10秒刷新一次
 
         // 更新启动按钮状态
         function updateStartBtnStatus() {

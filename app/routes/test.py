@@ -185,3 +185,66 @@ def get_task_status(task_id: str):
             "data": None
         })
 
+
+@test_bp.get("/running")
+def get_running_tasks():
+    """获取所有运行中任务"""
+    try:
+        running_tasks = [
+            task for task in test_tasks.values()
+            if task["status"] == "running"
+        ]
+        return jsonify({
+            "code": 200,
+            "msg": f"获取运行中任务成功（共{len(running_tasks)}个）",
+            "data": running_tasks
+        })
+    except Exception as e:
+        error_msg = f"获取运行中任务失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({
+            "code": 400,
+            "msg": error_msg,
+            "data": []
+        })
+
+
+@test_bp.post("/stop/<task_id>")
+def stop_test_task(task_id: str):
+    """停止指定测试任务"""
+    try:
+        task = test_tasks.get(task_id)
+        if not task:
+            return jsonify({
+                "code": 404,
+                "msg": f"任务{task_id}不存在",
+                "data": None
+            })
+
+        if task["status"] != "running":
+            return jsonify({
+                "code": 400,
+                "msg": f"任务{task_id}不在运行中，状态：{task['status']}",
+                "data": None
+            })
+
+        # 实际项目中需要实现真正的任务停止逻辑
+        # 这里只是模拟停止操作
+        task["status"] = "stopped"
+        task["end_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        task["stop_reason"] = "用户手动停止"
+
+        log.info(f"任务{task_id}已被手动停止")
+        return jsonify({
+            "code": 200,
+            "msg": f"任务{task_id}已停止",
+            "data": {"task_id": task_id}
+        })
+    except Exception as e:
+        error_msg = f"停止任务{task_id}失败：{str(e)}"
+        log.error(error_msg)
+        return jsonify({
+            "code": 400,
+            "msg": error_msg,
+            "data": None
+        })

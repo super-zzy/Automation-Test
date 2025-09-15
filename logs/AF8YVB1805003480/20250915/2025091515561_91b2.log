@@ -1,0 +1,70 @@
+[2025-09-15 15:56:15] [device_AF8YVB1805003480] [INFO] 开始初始化设备：AF8YVB1805003480
+[2025-09-15 15:56:15] [device_AF8YVB1805003480] [DEBUG] 设备AF8YVB1805003480在线状态：True
+[2025-09-15 15:56:15] [device_AF8YVB1805003480] [INFO] 执行初始化命令：python -m uiautomator2 init AF8YVB1805003480
+[2025-09-15 15:56:17] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:17,000 core:254 pid:7860] file u2.jar md5: 3564c56e4ef077f92c0fd32bcb42aea1
+[2025-09-15 15:56:17] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:17,076 core:243 pid:7860] file u2.jar already pushed
+[2025-09-15 15:56:17] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:17,076 core:111 pid:7860] http request GET /ping None
+[2025-09-15 15:56:17] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:17,111 core:71 pid:7860] launch uiautomator with cmd: CLASSPATH=/data/local/tmp/u2.jar app_process / com.wetest.uia2.Main
+[2025-09-15 15:56:17] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:17,139 core:111 pid:7860] http request GET /ping None
+[2025-09-15 15:56:17] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:17,675 core:111 pid:7860] http request GET /ping None
+[2025-09-15 15:56:17] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:17,770 core:39 pid:7860] MockAdbProcess: b'[server] INFO: [UiAutomator2Server] Starting Server\n'
+[2025-09-15 15:56:17] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:17,961 core:39 pid:7860] MockAdbProcess: b'SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.\n'
+[2025-09-15 15:56:18] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:18,029 core:39 pid:7860] MockAdbProcess: b'[server] INFO: clipboardManager inited\n'
+[2025-09-15 15:56:18] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:18,033 core:39 pid:7860] MockAdbProcess: b'[server] INFO: tmpdir is /data/local/tmp/u2\n'
+[2025-09-15 15:56:18] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:18,048 core:39 pid:7860] MockAdbProcess: b'[server] INFO: http server listening on *:9008\n'
+[2025-09-15 15:56:18] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:18,233 core:111 pid:7860] http request GET /ping None
+[2025-09-15 15:56:18] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:18,277 core:254 pid:7860] file u2.jar md5: 3564c56e4ef077f92c0fd32bcb42aea1
+[2025-09-15 15:56:18] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:18,352 core:243 pid:7860] file u2.jar already pushed
+[2025-09-15 15:56:18] [device_AF8YVB1805003480] [INFO] uiautomator2 init 命令执行完成
+[2025-09-15 15:56:20] [device_AF8YVB1805003480] [DEBUG] 执行 atx-agent 版本校验命令：adb -s AF8YVB1805003480 shell /data/local/tmp/atx-agent version
+[2025-09-15 15:56:20] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480初始化成功
+[2025-09-15 15:56:20] [task_2025091515561_91b2] [INFO] 准备测试环境：D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2
+[2025-09-15 15:56:20] [task_2025091515561_91b2] [DEBUG] 创建目录成功：D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2\allure_raw
+[2025-09-15 15:56:20] [task_2025091515561_91b2] [DEBUG] 创建目录成功：D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2\allure_html
+[2025-09-15 15:56:20] [task_2025091515561_91b2] [INFO] 测试目录初始化完成：D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2
+[2025-09-15 15:56:20] [task_2025091515561_91b2] [INFO] 测试用例校验通过：D:\PycharmProjects\ums_uiautomator\test_suite\tmp_project.py（文件大小：1.52KB）
+[2025-09-15 15:56:20] [task_2025091515561_91b2] [INFO] 开始执行Pytest测试...
+[2025-09-15 15:56:21] [device_AF8YVB1805003480] [INFO] 开始初始化设备：AF8YVB1805003480
+[2025-09-15 15:56:22] [device_AF8YVB1805003480] [DEBUG] 设备AF8YVB1805003480在线状态：True
+[2025-09-15 15:56:22] [device_AF8YVB1805003480] [INFO] 执行初始化命令：python -m uiautomator2 init AF8YVB1805003480
+[2025-09-15 15:56:23] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,621 core:254 pid:41356] file u2.jar md5: 3564c56e4ef077f92c0fd32bcb42aea1
+[2025-09-15 15:56:23] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,693 core:243 pid:41356] file u2.jar already pushed
+[2025-09-15 15:56:23] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,693 core:111 pid:41356] http request GET /ping None
+[2025-09-15 15:56:23] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,727 core:71 pid:41356] launch uiautomator with cmd: CLASSPATH=/data/local/tmp/u2.jar app_process / com.wetest.uia2.Main
+[2025-09-15 15:56:23] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:23,749 core:111 pid:41356] http request GET /ping None
+[2025-09-15 15:56:24] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,281 core:111 pid:41356] http request GET /ping None
+[2025-09-15 15:56:24] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,378 core:39 pid:41356] MockAdbProcess: b'[server] INFO: [UiAutomator2Server] Starting Server\n'
+[2025-09-15 15:56:24] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,561 core:39 pid:41356] MockAdbProcess: b'SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".\nSLF4J: Defaulting to no-operation (NOP) logger implementation\nSLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.\n'
+[2025-09-15 15:56:24] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,642 core:39 pid:41356] MockAdbProcess: b'[server] INFO: clipboardManager inited\n'
+[2025-09-15 15:56:24] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,644 core:39 pid:41356] MockAdbProcess: b'[server] INFO: tmpdir is /data/local/tmp/u2\n[server] INFO: http server listening on *:9008\n'
+[2025-09-15 15:56:24] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,815 core:111 pid:41356] http request GET /ping None
+[2025-09-15 15:56:24] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,864 core:254 pid:41356] file u2.jar md5: 3564c56e4ef077f92c0fd32bcb42aea1
+[2025-09-15 15:56:24] [device_AF8YVB1805003480] [DEBUG] uiautomator2 init 输出：[D 2025-09-15 15:56:24,936 core:243 pid:41356] file u2.jar already pushed
+[2025-09-15 15:56:25] [device_AF8YVB1805003480] [INFO] uiautomator2 init 命令执行完成
+[2025-09-15 15:56:27] [device_AF8YVB1805003480] [DEBUG] 执行 atx-agent 版本校验命令：adb -s AF8YVB1805003480 shell /data/local/tmp/atx-agent version
+[2025-09-15 15:56:27] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480初始化成功
+[2025-09-15 15:56:27] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480执行亮屏操作
+[2025-09-15 15:56:29] [device_AF8YVB1805003480] [ERROR] 设备AF8YVB1805003480检查文本'相机'失败：[Errno 2] No such file or directory: '/tmp/window_dump.xml'
+Traceback (most recent call last):
+  File "D:\PycharmProjects\ums_uiautomator\core\uiautomator.py", line 156, in check_text_exists
+    with open("/tmp/window_dump.xml", "r", encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/window_dump.xml'
+[2025-09-15 15:56:30] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480执行按键操作：home
+[2025-09-15 15:56:31] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480执行亮屏操作
+[2025-09-15 15:56:31] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480执行按键操作：home
+[2025-09-15 15:56:32] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480执行亮屏操作
+[2025-09-15 15:56:33] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480点击坐标：(100, 100)
+[2025-09-15 15:56:33] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480点击坐标：(200, 200)
+[2025-09-15 15:56:33] [device_AF8YVB1805003480] [INFO] 两次点击操作完成，测试通过
+[2025-09-15 15:56:34] [device_AF8YVB1805003480] [INFO] 设备AF8YVB1805003480执行按键操作：home
+[2025-09-15 15:56:34] [task_2025091515561_91b2] [INFO] Pytest执行完成（耗时：13.85秒，返回码：1）
+[2025-09-15 15:56:34] [task_2025091515561_91b2] [INFO] Pytest日志已保存：D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2\task_2025091515561_91b2.log（大小：9.52KB）
+[2025-09-15 15:56:34] [task_2025091515561_91b2] [INFO] 开始生成Allure HTML报告...
+[2025-09-15 15:56:34] [task_2025091515561_91b2] [DEBUG] Allure生成命令包含--clean参数
+[2025-09-15 15:56:34] [task_2025091515561_91b2] [DEBUG] Allure报告标题：report_2025091515561_91b2
+[2025-09-15 15:56:34] [task_2025091515561_91b2] [DEBUG] Allure生成命令：allure generate D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2\allure_raw -o D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2\allure_html --clean --title report_2025091515561_91b2
+[2025-09-15 15:56:40] [task_2025091515561_91b2] [INFO] Allure生成日志已保存：D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2\allure_generate.log
+[2025-09-15 15:56:40] [task_2025091515561_91b2] [DEBUG] 报告压缩功能已禁用
+[2025-09-15 15:56:40] [task_2025091515561_91b2] [INFO] Allure报告生成成功：D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2\allure_html\index.html（目录大小：2453.83MB，耗时：5.66秒）
+[2025-09-15 15:56:40] [task_2025091515561_91b2] [INFO] 报告元数据已保存：D:\PycharmProjects\ums_uiautomator\result\2025091515561_91b2\report_meta.json

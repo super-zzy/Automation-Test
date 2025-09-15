@@ -1,0 +1,5 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"调用click时传递单参数（预期失败）","1","test_case03","test_suite","Mon Sep 15 15:57:45 CST 2025","passed","Mon Sep 15 15:57:45 CST 2025","","tmp_project","",""
+"检查页面是否存在'QQ'文本（跳过）","0","test_case02","test_suite","Mon Sep 15 15:57:44 CST 2025","skipped","Mon Sep 15 15:57:44 CST 2025","","tmp_project","",""
+"检查页面是否存在'相机'文本","2014","test_case01","test_suite","Mon Sep 15 15:57:42 CST 2025","failed","Mon Sep 15 15:57:44 CST 2025","","tmp_project","",""
+"测试正确的坐标点击","1275","Case 04 测试正确的click","test_suite","Mon Sep 15 15:57:46 CST 2025","passed","Mon Sep 15 15:57:48 CST 2025","","tmp_project","",""
